@@ -61,9 +61,6 @@ public:
 	// 右トリガー入力状態の取得
 	float GetTriggerR() const { return triggerR; }
 
-	//スペースキー取得
-	float GetSpace()const { return space; }
-
 private:
 	GamePadButton		buttonState[2] = { 0 };
 	GamePadButton		buttonDown = 0;

@@ -11,7 +11,7 @@ Player::Player()
     model = new Model("Data/Model/Car/car.mdl");
 
     //モデルが大きいのでスケーリング、あまりしないほうが良い
-    scale.x = scale.y = scale.z = 0.002f;
+    scale.x = scale.y = scale.z = 0.01f;
 }
 
 //デストラクタ
@@ -36,7 +36,7 @@ void Player::Update(float elapsedTime)
     UpdateVelocity(elapsedTime);
 
     //重力反転
-    GravityInversion(elapsedTime);
+    GravityInverse(elapsedTime);
 
     //地面判定
     if (position.y > 0)
@@ -47,9 +47,6 @@ void Player::Update(float elapsedTime)
     {
         onGround = true;
     }
-
-    //空中判定
-    //if()
 
     //プレイヤーと箱との衝突処理
     CollisionPlayerVsFloortile();
@@ -95,8 +92,6 @@ void Player::CollisionPlayerVsFloortile()
             floortile->GetHeight(),
             outPosition))
         {
-
-
             //敵の真上付近に当たったかを判定
             DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
             DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&floortile->GetPosition());
@@ -117,7 +112,6 @@ void Player::CollisionPlayerVsFloortile()
                 else if (normal.y < 0.1f)
                 {
                     //ボックスの下歩行
-                    position.y = 10.0f;
                     SkyWalk(-position.y - ADJUST);
                 }
             }
@@ -176,6 +170,12 @@ void Player::SkyWalk(float speed)
     velocity.y = speed;
 }
 
+void Player::DownWalk(float speed)
+{
+    //下方向の力を設定
+    velocity.y = -speed;
+}
+
 //速力処理更新
 void Player::UpdateVelocity(float elapsedTime)
 {
@@ -207,20 +207,45 @@ void Player::InputJump()
 }
 
 //重力反転
-void Player::GravityInversion(float elapsedTime)
+void Player::GravityInverse(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButton() & GamePad::BTN_A)
+
+    //ここでボタンのカウントをする
+    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    {
+        count += 1;
+    }
+
+    //上反転
+    if (gamePad.GetButtonDown() & GamePad::BTN_A && count == 1)
     {
         //重力を上側に持っていく
-        gravity = 0.5;
+        gravity = 0.5f;
 
-        //BTN_Aはスペースキーな、
+        //BTN_Aはスペースキーな
         float ay = gamePad.BTN_A;
 
-        //
+        //車体を回すための処理
         float speed = rolling * elapsedTime;
 
+        //ここで車体を回す
         angle.z = ay * speed;
+    }
+
+    //下反転
+    if (gamePad.GetButtonDown() & GamePad::BTN_A && count == 2)
+    {
+        //重力を下側に持っていく
+        gravity = -0.5f;
+
+        //ここで車体を回す
+        angle.z = 0;
+    }
+
+    //初期に戻す
+    if (gamePad.GetButtonDown() & GamePad::BTN_A && count == 2)
+    {
+        count = 0;
     }
 }

@@ -14,7 +14,7 @@ void SceneGame::Initialize()
 	player = new Player();
 	player->SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, -3.0f));
 
-	//” ‚Ì‰Šú‰»
+	//‰º” ‚Ì‰Šú‰»
 	FloorTileManager& floortilemanager = FloorTileManager::Instance();
 	for (int i = 0; i < 8; ++i)
 	{
@@ -23,6 +23,7 @@ void SceneGame::Initialize()
 		floortilemanager.Register(box);
 	}
 
+	//ã” ‚Ì‰Šú‰»
 	FloorTileManager& floortilehigh = FloorTileManager::Instance();
 	for (int i = 0; i < 8; ++i)
 	{

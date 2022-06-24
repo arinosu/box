@@ -49,5 +49,4 @@ protected:   //継承先でもアクセスできるようにするため
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
     float radius = 0.5f;
     float height = 1.0f;
-    float friction = 0.5f;
 };
