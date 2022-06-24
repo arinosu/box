@@ -26,9 +26,6 @@ void FloorTileManager::Update(float elapsedTime)
     }
     //”jŠüƒŠƒXƒg‚ğƒNƒŠƒA
     removes.clear();
-
-    //” “¯m‚ÌÕ“Ëˆ—
-    CollisionBoxVsBox();
 }
 
 //•`‰æˆ—
@@ -69,32 +66,5 @@ void FloorTileManager::DrawDebugPrimitive()
     for (FloorTile* floortile : floortiles)
     {
         floortile->DrawDebugPrimitive();
-    }
-}
-
-//” “¯m‚ÌÕ“Ëˆ—
-void FloorTileManager::CollisionBoxVsBox()
-{
-    size_t boxcount = floortiles.size();
-    for (int i = 0; i < boxcount; ++i)
-    {
-        FloorTile* boxA = floortiles.at(i);
-        for (int j = i + 1; j < boxcount; ++j)
-        {
-            FloorTile* boxB = floortiles.at(j);
-
-            DirectX::XMFLOAT3 outPosition;
-            if (Collision::IntersectCylinderVsCylinder(
-                boxA->GetPosition(),
-                boxA->GetRadius(),
-                boxA->GetHeight(),
-                boxB->GetPosition(),
-                boxB->GetRadius(),
-                boxB->GetHeight(),
-                outPosition))
-            {
-                boxB->SetPosition(outPosition);
-            }
-        }
     }
 }

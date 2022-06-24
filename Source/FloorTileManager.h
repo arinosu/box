@@ -43,9 +43,6 @@ public:
     FloorTile* GetEnemy(int index) { return floortiles.at(index); }
 
 private:
-    //” “¯m‚ÌÕ“Ëˆ—
-    void CollisionBoxVsBox();
-
     std::vector<FloorTile*>floortiles;
     std::vector<FloorTile*>removes;
 };

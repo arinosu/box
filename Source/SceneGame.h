@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "Player.h"
 #include "floortile.h"
+#include "CameraController.h"
 
 // ゲームシーン
 class SceneGame
@@ -27,4 +28,5 @@ private:
 	Stage* stage = nullptr;   //例外スローを解消するため
 	Player* player = nullptr; //例外スローを解消するため
 	FloorTile* floorTile = nullptr; //例外スローを解消するため
+	CameraController* cameraController = nullptr;//例外スローを解消するため
 };

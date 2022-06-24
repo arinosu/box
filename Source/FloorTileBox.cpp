@@ -10,7 +10,7 @@ FloorTileBox::FloorTileBox()
     scale.x = scale.y = scale.z = 0.01f;
 
     //ïùÅAçÇÇ≥ê›íË
-    radius = 0.5f;
+    radius = 0.6f;
     height = 1.5f;
 }
 

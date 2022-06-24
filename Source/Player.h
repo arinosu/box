@@ -27,6 +27,9 @@ public:
     //上歩行処理
     void SkyWalk(float speed);
 
+    //重力反転
+    void GravityInversion(float elapsedTime);
+
     //速力処理更新
     void UpdateVelocity(float elapsedTime);
 
@@ -42,6 +45,12 @@ private:
 
 private:
     Model* model = nullptr;
+    float ADJUST = 0.7f;
     float jumpSpeed = 20.0f;
+    float rolling = 12.0f;
     float gravity = -1.0f;
+
+    // true...地面に着地している
+    bool onGround = true;
+    bool skyGround = true;
 };

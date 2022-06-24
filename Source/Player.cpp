@@ -8,10 +8,10 @@
 //コンストラクタ
 Player::Player()
 {
-    model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
+    model = new Model("Data/Model/Car/car.mdl");
 
     //モデルが大きいのでスケーリング、あまりしないほうが良い
-    scale.x = scale.y = scale.z = 0.01f;
+    scale.x = scale.y = scale.z = 0.002f;
 }
 
 //デストラクタ
@@ -34,6 +34,22 @@ void Player::Update(float elapsedTime)
 
     //速力処理更新
     UpdateVelocity(elapsedTime);
+
+    //重力反転
+    GravityInversion(elapsedTime);
+
+    //地面判定
+    if (position.y > 0)
+    {
+        onGround = false;
+    }
+    else 
+    {
+        onGround = true;
+    }
+
+    //空中判定
+    //if()
 
     //プレイヤーと箱との衝突処理
     CollisionPlayerVsFloortile();
@@ -79,6 +95,8 @@ void Player::CollisionPlayerVsFloortile()
             floortile->GetHeight(),
             outPosition))
         {
+
+
             //敵の真上付近に当たったかを判定
             DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
             DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&floortile->GetPosition());
@@ -86,15 +104,25 @@ void Player::CollisionPlayerVsFloortile()
             DirectX::XMVECTOR N = DirectX::XMVector3Normalize(V);
             DirectX::XMFLOAT3 normal;
             DirectX::XMStoreFloat3(&normal, N);
-            if (normal.y > 0.8f)
-            {
-                //上を歩く
-                SkyWalk(jumpSpeed * 0.05f);
-            }
-            else
-            {
-                
 
+            // ボックス上（上であれ下であれ地面には着地していない）
+            if (onGround == false)
+            {
+                if (normal.y > 0.0f)
+                {
+                    //ボックスの上歩行
+                    position.y = floortile->GetHeight();
+                    SkyWalk(position.y - ADJUST);
+                }
+                else if (normal.y < 0.1f)
+                {
+                    //ボックスの下歩行
+                    position.y = 10.0f;
+                    SkyWalk(-position.y - ADJUST);
+                }
+            }
+            else if (onGround == true)
+            {
                 //押し出し後の位置設定
                 this->SetPosition(outPosition);
             }
@@ -134,7 +162,7 @@ void Player::DrawDebugGUI()
 //移動操作
 void Player::Walk(float elapsedTime)
 {
-    float moveSpeed = 1.0f * elapsedTime;   //一秒間に1.0移動する速度
+    float moveSpeed = 2.0f * elapsedTime;   //一秒間に1.0移動する速度
     {
         //真っ直ぐ勝手に進む
         position.z += moveSpeed;
@@ -172,8 +200,27 @@ void Player::UpdateVelocity(float elapsedTime)
 void Player::InputJump()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    if (gamePad.GetButtonDown() & GamePad::BTN_B)
     {
         SkyWalk(jumpSpeed);
+    }
+}
+
+//重力反転
+void Player::GravityInversion(float elapsedTime)
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetButton() & GamePad::BTN_A)
+    {
+        //重力を上側に持っていく
+        gravity = 0.5;
+
+        //BTN_Aはスペースキーな、
+        float ay = gamePad.BTN_A;
+
+        //
+        float speed = rolling * elapsedTime;
+
+        angle.z = ay * speed;
     }
 }

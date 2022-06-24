@@ -30,17 +30,20 @@ bool Collision::IntersectCylinderVsCylinder(
         return false;
     }
 
-    //A‚ªB‚ğ‰Ÿ‚µo‚·
+    //‚OŠ„‚è‚³‚ê‚È‚¢‚æ‚¤‚É‚·‚é‚½‚ß
     vx = distXZ != 0.0f ? vx /= distXZ : vx;
     vz = distXZ != 0.0f ? vz /= distXZ : vz;
-    //outPositionB.x = positionA.x + (vx * range);
-    //outPositionB.y = positionB.y;
-    //outPositionB.z = positionA.z + (vz * range);
 
-
+#if false
+    //A‚ªB‚ğ‰Ÿ‚µo‚·
+    outPositionB.x = positionA.x - (vx * range);
+    outPositionB.y = positionA.y;
+    outPositionB.z = positionA.z - (vz * range);
+#else
+    //A‚ªB‚ğ‰Ÿ‚µo‚³‚È‚¢
     outPositionB.x = positionB.x - (vx * range);
     outPositionB.y = positionA.y;
     outPositionB.z = positionB.z - (vz * range);
-
+#endif
     return true;
 }

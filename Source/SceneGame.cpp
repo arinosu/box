@@ -19,23 +19,26 @@ void SceneGame::Initialize()
 	for (int i = 0; i < 8; ++i)
 	{
 		FloorTileBox* box = new FloorTileBox();
-		box->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i * 1.0f));
+		box->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i * 1.2f));
 		floortilemanager.Register(box);
 	}
 
-	//FloorTileManager& floortilehigh = FloorTileManager::Instance();
-	//for (int i = 0; i < 8; ++i)
-	//{
-	//	FloorTileBox* box = new FloorTileBox();
-	//	box->SetPosition(DirectX::XMFLOAT3(0.0f, 3, i * 1.0f));
-	//	floortilehigh.Register(box);
-	//}
+	FloorTileManager& floortilehigh = FloorTileManager::Instance();
+	for (int i = 0; i < 8; ++i)
+	{
+		FloorTileBox* box = new FloorTileBox();
+		box->SetPosition(DirectX::XMFLOAT3(0.0f, 10, i * 1.2f));
+		floortilehigh.Register(box);
+	}
+
+	//カメラコントローラー初期化
+	cameraController = new CameraController();
 
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
-		DirectX::XMFLOAT3(0, 5, -10),
+		DirectX::XMFLOAT3(0, 10, -10),
 		DirectX::XMFLOAT3(0, 0, 0),
 		DirectX::XMFLOAT3(0, 1, 0)
 	);
@@ -66,6 +69,14 @@ void SceneGame::Finalize()
 
 	//箱の終了化
 	FloorTileManager::Instance().Clear();
+
+	//カメラコントローラー終了化
+	if (cameraController != nullptr)
+	{
+		delete cameraController;
+		cameraController = nullptr;
+	}
+
 }
 
 // 更新処理
@@ -79,6 +90,12 @@ void SceneGame::Update(float elapsedTime)
 
 	//箱更新処理
 	FloorTileManager::Instance().Update(elapsedTime);
+
+	//カメラコントローラー更新処理
+	DirectX::XMFLOAT3 target = player->GetPosition();
+	target.y += 3.0f;
+	cameraController->SetTarget(target);
+	cameraController->Update(elapsedTime);
 }
 
 // 描画処理
@@ -117,6 +134,7 @@ void SceneGame::Render()
 		//箱描画
 		FloorTileManager::Instance().Render(dc, shader);
 
+		//これより下に書くと描画されない
 		shader->End(dc);
 	}
 

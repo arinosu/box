@@ -48,6 +48,6 @@ protected:   //継承先でもアクセスできるようにするため
     };               //上記のXMFLOAT3を使い行列を定義する
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
     float radius = 0.5f;
-    float height = 2.0f;
+    float height = 1.0f;
     float friction = 0.5f;
 };

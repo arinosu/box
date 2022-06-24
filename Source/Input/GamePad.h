@@ -22,6 +22,7 @@ public:
 	static const GamePadButton BTN_RIGHT_SHOULDER	= (1 << 13);
 	static const GamePadButton BTN_LEFT_TRIGGER		= (1 << 14);
 	static const GamePadButton BTN_RIGHT_TRIGGER	= (1 << 15);
+	static const GamePadButton BTN_SPACE            = (1 << 16);
 
 public:
 	GamePad() {}
@@ -60,6 +61,9 @@ public:
 	// 右トリガー入力状態の取得
 	float GetTriggerR() const { return triggerR; }
 
+	//スペースキー取得
+	float GetSpace()const { return space; }
+
 private:
 	GamePadButton		buttonState[2] = { 0 };
 	GamePadButton		buttonDown = 0;
@@ -70,5 +74,6 @@ private:
 	float				axisRy = 0.0f;
 	float				triggerL = 0.0f;
 	float				triggerR = 0.0f;
+	float               space = 0.0f;
 	int					slot = 0;
 };
