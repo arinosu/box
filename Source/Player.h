@@ -3,6 +3,7 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Model.h"
 #include "Character.h"
+#include "Effect.h"
 
 //プレイヤー
 class Player :public Character
@@ -27,32 +28,26 @@ public:
     //上歩行処理
     void SkyWalk(float speed);
 
-    //下歩行処理
-    void DownWalk(float speed);
-
     //重力反転
     void GravityInverse(float elapsedTime);
 
     //速力処理更新
     void UpdateVelocity(float elapsedTime);
 
-    //ジャンプ入力処理
-    void InputJump();
-
     //デバッグプリミティブ描画
     void DrawDebugPrimitive();
 
 private:
-    //プレイヤーと箱との衝突処理
+    //プレイヤーと箱との衝突処理頭上
     void CollisionPlayerVsFloortile();
 
 private:
     Model* model = nullptr;
-    float ADJUST = 0.7f;
-    float jumpSpeed = 20.0f;
+    Effect* effect = nullptr;
+    float ADJUST = 0.0125f;
     float rolling = 12.0f;
-    float gravity = -1.0f;
+    float gravity = 0.0f;
     int count = 0;
-    // true...地面に着地している
-    bool onGround = true;
+
+    bool Reverse = false; // true:上走行　false:下走行
 };

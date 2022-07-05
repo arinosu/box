@@ -4,6 +4,8 @@
 #include "Collision.h"
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
+#include "SceneOver.h"
+#include "SceneManager.h"
 
 //コンストラクタ
 Player::Player()
@@ -11,12 +13,20 @@ Player::Player()
     model = new Model("Data/Model/Car/car.mdl");
 
     //モデルが大きいのでスケーリング、あまりしないほうが良い
-    scale.x = scale.y = scale.z = 0.01f;
+    scale.x = scale.y = scale.z = 0.25f;
+
+    //ヒットエフェクトを読み込む
+    effect = new Effect("Data/Effect/Hit.efk");
+
+    height = 0.6f;
+    radius = 1.1f;
 }
 
 //デストラクタ
 Player::~Player()
 {
+    delete effect;
+
     delete model;
 }
 
@@ -26,30 +36,17 @@ void Player::Update(float elapsedTime)
     //移動操作
     Walk(elapsedTime);
 
-    //オブジェクト行列を更新
-    UpdateTransform();
-
-    //ジャンプ入力処理
-    InputJump();
-
     //速力処理更新
     UpdateVelocity(elapsedTime);
 
     //重力反転
     GravityInverse(elapsedTime);
 
-    //地面判定
-    if (position.y > 0)
-    {
-        onGround = false;
-    }
-    else 
-    {
-        onGround = true;
-    }
-
-    //プレイヤーと箱との衝突処理
+    //プレイヤーと箱との衝突処理頭上
     CollisionPlayerVsFloortile();
+
+    //オブジェクト行列を更新
+    UpdateTransform();
 
     //モデル行列更新
     model->UpdateTransform(transform);
@@ -67,10 +64,10 @@ void Player::DrawDebugPrimitive()
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     //衝突判定用のデバッグを描画
-    debugRenderer->AABB(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 }
 
-//プレイヤーと箱との衝突処理
+//プレイヤーと箱との衝突処理頭上
 void Player::CollisionPlayerVsFloortile()
 {
     FloorTileManager& floortilemanager = FloorTileManager::Instance();
@@ -92,34 +89,40 @@ void Player::CollisionPlayerVsFloortile()
             floortile->GetHeight(),
             outPosition))
         {
-            //敵の真上付近に当たったかを判定
-            DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
-            DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&floortile->GetPosition());
-            DirectX::XMVECTOR V = DirectX::XMVectorSubtract(P, E);
-            DirectX::XMVECTOR N = DirectX::XMVector3Normalize(V);
-            DirectX::XMFLOAT3 normal;
-            DirectX::XMStoreFloat3(&normal, N);
+            // 下走行の場合の押し出し
+            if (!Reverse && position.y > floortile->GetPosition().y)
+            {
+                // Y速度(重力)を0にする
+                velocity.y = 0.0f;
 
-            // ボックス上（上であれ下であれ地面には着地していない）
-            if (onGround == false)
-            {
-                if (normal.y > 0.0f)
-                {
-                    //ボックスの上歩行
-                    position.y = floortile->GetHeight();
-                    SkyWalk(position.y - ADJUST);
-                }
-                else if (normal.y < 0.1f)
-                {
-                    //ボックスの下歩行
-                    SkyWalk(-position.y - ADJUST);
-                }
-            }
-            else if (onGround == true)
-            {
-                //押し出し後の位置設定
+                // XZ平面は修正しない
+                outPosition.x = position.x;
+                outPosition.z = position.z;
+
+                // Y平面は上に押し出す(BOXの上に乗る)
+                outPosition.y = floortile->GetPosition().y + floortile->GetHeight() + ADJUST;
+
+                // 計算した値でプレイヤーを押し出す
                 this->SetPosition(outPosition);
             }
+            // 上走行の場合の押し出し
+            else if (Reverse && position.y < floortile->GetPosition().y)
+            {
+                // Y速度(重力)を0にする
+                velocity.y = 0.0f;
+
+                // XZ平面は修正しない
+                outPosition.x = position.x;
+                outPosition.z = position.z;
+
+                // Y平面は下に押し出す(BOXの下に乗る)
+                outPosition.y = floortile->GetPosition().y - height - ADJUST;
+
+                // 計算した値でプレイヤーを押し出す
+                this->SetPosition(outPosition);
+            }
+            // それ以外の場合はXZ平面のみ修正する
+            else this->SetPosition(outPosition);
         }
     }
 }
@@ -148,6 +151,9 @@ void Player::DrawDebugGUI()
             angle.z = DirectX::XMConvertToRadians(a.z);
             //スケール
             ImGui::InputFloat3("Scale", &scale.x);
+
+
+            ImGui::InputFloat3("Velocity", &velocity.y);
         }
     }
     ImGui::End();
@@ -156,10 +162,15 @@ void Player::DrawDebugGUI()
 //移動操作
 void Player::Walk(float elapsedTime)
 {
-    float moveSpeed = 2.0f * elapsedTime;   //一秒間に1.0移動する速度
+    float moveSpeed = 10.0f * elapsedTime;   //一秒間に1.0移動する速度
     {
         //真っ直ぐ勝手に進む
         position.z += moveSpeed;
+
+        //エフェクトの計算
+        DirectX::XMFLOAT3 T = position;
+        T.y += position.x * 0.5f;
+        effect->Play(position);
     }
 }
 
@@ -168,12 +179,6 @@ void Player::SkyWalk(float speed)
 {
     //上方向の力を設定
     velocity.y = speed;
-}
-
-void Player::DownWalk(float speed)
-{
-    //下方向の力を設定
-    velocity.y = -speed;
 }
 
 //速力処理更新
@@ -188,21 +193,15 @@ void Player::UpdateVelocity(float elapsedTime)
     //移動処理
     position.y += velocity.y * elapsedTime;
 
-    //地面判定
-    if (position.y < 0.0f)
+    //すり抜け防止
+    if (Reverse == false)
     {
-        position.y = 0.0f;
-        velocity.y = 0.0f;
+        velocity.y += 0.1f;
     }
-}
 
-//ジャンプ入力処理
-void Player::InputJump()
-{
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_B)
+    if (Reverse == true)
     {
-        SkyWalk(jumpSpeed);
+        velocity.y -= 0.1f;
     }
 }
 
@@ -211,41 +210,25 @@ void Player::GravityInverse(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    //ここでボタンのカウントをする
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    // ここで走行の上下切り替えをする
+    if (gamePad.GetButtonDown() & GamePad::BTN_A) Reverse = !Reverse;
+
+    // 上反転(上走行)
+    if (Reverse)
     {
-        count += 1;
-    }
-
-    //上反転
-    if (gamePad.GetButtonDown() & GamePad::BTN_A && count == 1)
-    {
-        //重力を上側に持っていく
-        gravity = 0.5f;
-
-        //BTN_Aはスペースキーな
-        float ay = gamePad.BTN_A;
-
-        //車体を回すための処理
-        float speed = rolling * elapsedTime;
+        //重力を上方向に持っていく
+        gravity = 0.3f;
 
         //ここで車体を回す
-        angle.z = ay * speed;
+        angle.z = DirectX::XMConvertToRadians(180);
     }
-
-    //下反転
-    if (gamePad.GetButtonDown() & GamePad::BTN_A && count == 2)
+    // 下反転(下走行)
+    else if (!Reverse)
     {
-        //重力を下側に持っていく
-        gravity = -0.5f;
+        //重力を下方向に持っていく
+        gravity = -0.3f;
 
         //ここで車体を回す
         angle.z = 0;
-    }
-
-    //初期に戻す
-    if (gamePad.GetButtonDown() & GamePad::BTN_A && count == 2)
-    {
-        count = 0;
     }
 }

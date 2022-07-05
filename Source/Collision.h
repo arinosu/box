@@ -8,7 +8,7 @@ using namespace DirectX;
 class Collision
 {
 public:
-    //‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è
+    //‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è“ªã
     static bool IntersectCylinderVsCylinder(
         const DirectX::XMFLOAT3& positionA,
         float radiusA,

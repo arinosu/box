@@ -3,10 +3,12 @@
 
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
-#include "SceneGame.h"
 #include "Framework.h"
-
-static SceneGame sceneGame;
+#include "SceneTitle.h"
+#include "SceneOver.h"
+#include "SceneChoice.h"
+#include "SceneManager.h"
+#include "EffectManager.h"
 
 // 垂直同期間隔設定
 static const int syncInterval = 1;
@@ -17,13 +19,21 @@ Framework::Framework(HWND hWnd)
 	, input(hWnd)
 	, graphics(hWnd)
 {
-	sceneGame.Initialize();
+	//エフェクトマネージャー初期化
+	EffectManager::Instance().Initialize();
+
+	//シーンの初期化
+	SceneManager::Instance().ChangeScene(new SceneTitle);
 }
 
 // デストラクタ
 Framework::~Framework()
 {
-	sceneGame.Finalize();
+	//シーン終了化
+	SceneManager::Instance().Clear();
+
+	//エフェクトマネージャー終了化
+	EffectManager::Instance().Finalize();
 }
 
 // 更新処理
@@ -33,7 +43,7 @@ void Framework::Update(float elapsedTime/*Elapsed seconds from last frame*/)
 	input.Update();
 
 	// シーン更新処理
-	sceneGame.Update(elapsedTime);
+	SceneManager::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -41,11 +51,15 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 {
 	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
 
+	//別スレッド中にデバイスコンテキストが使われていた場合
+	//同時アクセスしないように排他制御する
+	std::lock_guard<std::mutex>lock(graphics.GetMutex());
+
 	// IMGUIフレーム開始処理
 	graphics.GetImGuiRenderer()->NewFrame();
 
 	// シーン描画処理
-	sceneGame.Render();
+	SceneManager::Instance().Render();
 
 	// IMGUIデモウインドウ描画（IMGUI機能テスト用）
 	//ImGui::ShowDemoWindow();

@@ -1,8 +1,8 @@
-#include "FloorTileBox.h"
+#include "Box.h"
 #include "Collision.h"
 
 //コンストラクタ
-FloorTileBox::FloorTileBox()
+Box::Box()
 {
     model = new Model("Data/Model/Floortile/Floortile.mdl");
 
@@ -11,17 +11,18 @@ FloorTileBox::FloorTileBox()
 
     //幅、高さ設定
     radius = 1.4f;
-    height = 0.4f;
+    height = 1.5f;
+
 }
 
 //デストラクタ
-FloorTileBox::~FloorTileBox()
+Box::~Box()
 {
     delete model;
 }
 
 //更新処理
-void FloorTileBox::Update(float elapsedTime)
+void Box::Update(float elapsedTime)
 {
     //オブジェクト行列を更新
     UpdateTransform();
@@ -31,7 +32,7 @@ void FloorTileBox::Update(float elapsedTime)
 }
 
 //描画処理
-void FloorTileBox::Render(ID3D11DeviceContext* dc, Shader* shader)
+void Box::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
 }

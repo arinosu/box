@@ -1,6 +1,6 @@
 #include "Collision.h"
 
-//‰~’Œ‚Æ‰~’Œ‚ÌŒð·”»’è
+//‰~’Œ‚Æ‰~’Œ‚ÌŒð·”»’è“ªã
 bool Collision::IntersectCylinderVsCylinder(
     const DirectX::XMFLOAT3& positionA,
     float radiusA,
@@ -20,6 +20,18 @@ bool Collision::IntersectCylinderVsCylinder(
     {
         return false;
     }
+
+    ////B‚Ì‘«Œ³‚ªA‚Ì“ª‚æ‚èã‚È‚ç“–‚½‚Á‚Ä‚¢‚È‚¢
+    //if (positionB.y > positionA.y + heightA)
+    //{
+    //    return false;
+    //}
+    ////B‚Ì“ª‚ªA‚Ì‘«Œ³‚æ‚è‰º‚È‚ç“–‚½‚Á‚Ä‚¢‚È‚¢
+    //if (positionB.y + heightB < positionA.y)
+    //{
+    //    return false;
+    //}
+
     //XZ•½–Ê‚Å‚Ì”ÍˆÍƒ`ƒFƒbƒN
     float vx = positionB.x - positionA.x;
     float vz = positionB.z - positionA.z;
@@ -36,12 +48,12 @@ bool Collision::IntersectCylinderVsCylinder(
 
 #if false
     //A‚ªB‚ð‰Ÿ‚µo‚·
-    outPositionB.x = positionA.x - (vx * range);
+    outPositionB.x = positionA.x + (vx * range);
     outPositionB.y = positionA.y;
-    outPositionB.z = positionA.z - (vz * range);
+    outPositionB.z = positionA.z + (vz * range);
 #else
     //A‚ªB‚ð‰Ÿ‚µo‚³‚È‚¢
-    outPositionB.x = positionB.x - (vx * range);
+    outPositionB.x = positionB.x + (vx * range);
     outPositionB.y = positionA.y;
     outPositionB.z = positionB.z - (vz * range);
 #endif

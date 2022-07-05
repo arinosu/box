@@ -4,29 +4,36 @@
 #include "Player.h"
 #include "floortile.h"
 #include "CameraController.h"
+#include "FloortileStage1.h"
+#include "FloortileStage2.h"
+#include "FloortileStage3.h"
+#include "Scene.h"
 
 // ゲームシーン
-class SceneGame
+class SceneGame :public Scene
 {
 public:
 	SceneGame() {}
-	~SceneGame() {}
+	~SceneGame() override {}
 
 	// 初期化
-	void Initialize();
+	void Initialize()override;
 
 	// 終了化
-	void Finalize();
+	void Finalize()override;
 
 	// 更新処理
-	void Update(float elapsedTime);
+	void Update(float elapsedTime)override;
 
 	// 描画処理
-	void Render();
+	void Render()override;
 
 private:
 	Stage* stage = nullptr;   //例外スローを解消するため
 	Player* player = nullptr; //例外スローを解消するため
 	FloorTile* floorTile = nullptr; //例外スローを解消するため
 	CameraController* cameraController = nullptr;//例外スローを解消するため
+	FloortileStage1* floortilestage1 = nullptr;//例外スローを解消するため
+	FloortileStage2* floortilestage2 = nullptr;//例外スローを解消するため
+	FloortileStage3* floortilestage3 = nullptr;//例外スローを解消するため
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <memory>
 #include <d3d11.h>
 #include <wrl.h>
@@ -51,6 +52,9 @@ public:
 	// ImGuiレンダラ取得
 	ImGuiRenderer* GetImGuiRenderer() const { return imguiRenderer.get(); }
 
+	//ミューテックス取得
+	std::mutex& GetMutex() { return mutex; }
+
 private:
 	static Graphics*								instance;
 
@@ -66,7 +70,8 @@ private:
 	std::unique_ptr<LineRenderer>					lineRenderer;
 	std::unique_ptr<ImGuiRenderer>					imguiRenderer;
 
+	std::mutex                                      mutex;
+
 	float	screenWidth;
 	float	screenHeight;
 };
-
