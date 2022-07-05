@@ -21,10 +21,10 @@ public:
 private:
     DirectX::XMFLOAT3 target = { 0,0,0 };
     DirectX::XMFLOAT3 angle = { 0,0,0 };
-    float cameraSpeed = 0;
+    float cameraSpeed = 0.0f;
     float range = 10.0f;
     bool CameraChange = false;   // true:反転しない　false:反転
-
+    float roll = 0; 
 
     //この変数はステージ作成の時につかうので終わったら削除
     float rollSpeed = DirectX::XMConvertToRadians(180);

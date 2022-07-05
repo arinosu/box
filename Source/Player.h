@@ -37,6 +37,12 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive();
 
+    void SetLife(const bool life_) { life = life_; }
+
+    bool GetLife() { return life; }
+
+    void Death();
+
 private:
     //プレイヤーと箱との衝突処理頭上
     void CollisionPlayerVsFloortile();
@@ -48,6 +54,7 @@ private:
     float rolling = 12.0f;
     float gravity = 0.0f;
     int count = 0;
+    bool life = true;
 
     bool Reverse = false; // true:上走行　false:下走行
 };

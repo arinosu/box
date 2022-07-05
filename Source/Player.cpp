@@ -6,6 +6,7 @@
 #include "Input/Input.h"
 #include "SceneOver.h"
 #include "SceneManager.h"
+#include "SceneOver.h"
 
 //コンストラクタ
 Player::Player()
@@ -16,7 +17,7 @@ Player::Player()
     scale.x = scale.y = scale.z = 0.25f;
 
     //ヒットエフェクトを読み込む
-    effect = new Effect("Data/Effect/Hit.efk");
+    effect = new Effect("Data/Effect/Laser01.efkefc");
 
     height = 0.6f;
     radius = 1.1f;
@@ -50,6 +51,13 @@ void Player::Update(float elapsedTime)
 
     //モデル行列更新
     model->UpdateTransform(transform);
+
+    //死亡処理
+    if (GetLife() == true)
+    {
+        Death();
+    }
+
 }
 
 //描画処理
@@ -170,7 +178,7 @@ void Player::Walk(float elapsedTime)
         //エフェクトの計算
         DirectX::XMFLOAT3 T = position;
         T.y += position.x * 0.5f;
-        effect->Play(position);
+        effect->Play(position, 0.2f);
     }
 }
 
@@ -221,6 +229,7 @@ void Player::GravityInverse(float elapsedTime)
 
         //ここで車体を回す
         angle.z = DirectX::XMConvertToRadians(180);
+
     }
     // 下反転(下走行)
     else if (!Reverse)
@@ -230,5 +239,22 @@ void Player::GravityInverse(float elapsedTime)
 
         //ここで車体を回す
         angle.z = 0;
+    }
+}
+
+// 死亡処理
+void Player::Death()
+{
+    if (position.y < -28)
+    {
+        SetLife(false);
+    }
+    else if (position.y > 39)
+    {
+        SetLife(false);
+    }
+    else
+    {
+        SetLife(true);
     }
 }

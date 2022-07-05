@@ -5,6 +5,9 @@
 #include "Floortilebox.h"
 #include "Input/Input.h"
 #include "EffectManager.h"
+#include "Scene.h"
+#include "SceneOver.h"
+#include "SceneManager.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -12,12 +15,18 @@ void SceneGame::Initialize()
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
 	//ステージ初期化
-	//stage = new Stage();
+	stage = new Stage();
 
 	//プレイヤー初期化
 	player = new Player();
-	player->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, -1.6f));
+	player->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
 
+	//スプライト初期化
+	sprite = new Sprite("Data/Sprite/gameover.png");
+
+	//タイマー初期化
+	timer = 0.0f;
+	
 	//ステージ1の初期化
 	if (gamePad.GetButton() & GamePad::BTN_B) {
 		floortilestage1 = new FloortileStage1();
@@ -58,22 +67,19 @@ void SceneGame::Initialize()
 // 終了化
 void SceneGame::Finalize()
 {
-	//ステージ終了化
-	//if (stage != nullptr)
-	//{
-	//	delete stage;
-	//	stage = nullptr;
-	//}
-
-	//プレイヤー終了化
-	if (player != nullptr)
+	//カメラコントローラー終了化
+	if (cameraController != nullptr)
 	{
-		delete player;
-		player = nullptr;
+		delete cameraController;
+		cameraController = nullptr;
 	}
 
-	//箱の終了化
-	FloorTileManager::Instance().Clear();
+	//ステージ終了化
+	if (stage != nullptr)
+	{
+		delete stage;
+		stage = nullptr;
+	}
 
 	//ステージ1の終了化
 	if (floortilestage1 != nullptr)
@@ -96,25 +102,29 @@ void SceneGame::Finalize()
 		floortilestage3 = nullptr;
 	}
 
-	//カメラコントローラー終了化
-	if (cameraController != nullptr)
+	//プレイヤー終了化
+	if (player != nullptr)
 	{
-		delete cameraController;
-		cameraController = nullptr;
+		delete player;
+		player = nullptr;
 	}
+
+	// スプライト終了化
+	if (sprite != nullptr)
+	{
+		delete sprite;
+		sprite = nullptr;
+	}
+
+	//箱の終了化
+	FloorTileManager::Instance().Clear();
+
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-	//ステージ更新処理
-	//stage->Update(elapsedTime);
-
-	//プレイヤー更新処理
-	player->Update(elapsedTime);
-
-	//箱更新処理
-	FloorTileManager::Instance().Update(elapsedTime);
+	GamePad& gamePad = Input::Instance().GetGamePad();
 
 	//カメラコントローラー更新処理
 	DirectX::XMFLOAT3 target = player->GetPosition();
@@ -123,6 +133,27 @@ void SceneGame::Update(float elapsedTime)
 	cameraController->SetTarget(target);
 	cameraController->SetSpeed(cameraSpeed);
 	cameraController->Update(elapsedTime);
+	
+	//ステージ更新処理
+	stage->Update(elapsedTime);
+
+	//プレイヤー更新処理
+	player->Update(elapsedTime);
+
+	if (player->GetLife() == false)
+	{
+		timer++;
+		//スペースキーを押したらセレクト画面へ切り替え
+		const GamePadButton Button =
+			GamePad::BTN_A;
+		if (gamePad.GetButton() & Button)
+		{
+			Initialize();
+		}
+	}
+
+	//箱更新処理
+	FloorTileManager::Instance().Update(elapsedTime);
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -155,8 +186,9 @@ void SceneGame::Render()
 	{
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
+
 		//ステージ描画
-		//stage->Render(dc, shader);
+		stage->Render(dc, shader);
 
 		//プレイヤー描画
 		player->Render(dc, shader);
@@ -190,7 +222,14 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-
+		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
+		float textureWidth = static_cast<float>(sprite->GetTextureWidth());
+		float textureHeight = static_cast<float>(sprite->GetTextureHeight());
+		if (player->GetLife() == false)
+		{
+			sprite->Render(dc, 0, 0, screenWidth, screenHeight, 0, 0, textureWidth, textureHeight, 0, 1, 1, 1, 1);
+		}
 	}
 
 	// 2DデバッグGUI描画

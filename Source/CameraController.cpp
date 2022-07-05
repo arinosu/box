@@ -7,7 +7,7 @@ void CameraController::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-//--この処理はステージ作成のために使うので終わったら削除---------
+    //--この処理はステージ作成のために使うので終わったら削除---------
     float ax = gamePad.GetAxisRX();
     float ay = gamePad.GetAxisRY();
     //カメラの回転速度
@@ -24,9 +24,9 @@ void CameraController::Update(float elapsedTime)
     //Y軸のカメラ回転を制御
     if (angle.y > maxAngle)angle.y = maxAngle;
     if (angle.y < minAngle)angle.y = minAngle;
-//-----------------------------------------------------------
+    //-----------------------------------------------------------
 
-    //カメラ回転値を回転行列に変換
+        //カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
 
     //回転行列から前方向ベクトルを取り出す

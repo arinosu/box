@@ -8,6 +8,7 @@
 #include "FloortileStage2.h"
 #include "FloortileStage3.h"
 #include "Scene.h"
+#include "Graphics/Sprite.h"
 
 // ゲームシーン
 class SceneGame :public Scene
@@ -36,4 +37,6 @@ private:
 	FloortileStage1* floortilestage1 = nullptr;//例外スローを解消するため
 	FloortileStage2* floortilestage2 = nullptr;//例外スローを解消するため
 	FloortileStage3* floortilestage3 = nullptr;//例外スローを解消するため
+	float timer;
+	Sprite* sprite = nullptr;
 };
