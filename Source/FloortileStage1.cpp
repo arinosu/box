@@ -2,11 +2,13 @@
 #include "FloortileManager.h"
 #include "Floortilebox.h"
 #include "Box.h"
+#include "BoxManager.h"
 
 void FloortileStage1::Initialize()
 {
 	//èÓïÒÇéùÇ¡ÇƒÇ≠ÇÈ
 	FloorTileManager& floortilemanager = FloorTileManager::Instance();
+	BoxManager& boxmanager = BoxManager::Instance();
 
 	//1 â∫
 	for (int i = 0; i < 10; ++i)
@@ -28,7 +30,7 @@ void FloortileStage1::Initialize()
 		Box* box = new Box();
 		box->SetPosition(DirectX::XMFLOAT3(0.0f, 16.5f, i * 2.7f + 56));
 		box->SetAngle(DirectX::XMFLOAT3(89.5f, 0.0f, 0.0f));
-		floortilemanager.Register(box);
+		boxmanager.Register(box);
 	}
 	//4 â∫
 	for (int i = 0; i < 15; ++i)
@@ -43,7 +45,7 @@ void FloortileStage1::Initialize()
 		Box* box = new Box();
 		box->SetPosition(DirectX::XMFLOAT3(0.0f, 2.0f, i * 2.7f + 83));
 		box->SetAngle(DirectX::XMFLOAT3(89.5f, 0.0f, 0.0f));
-		floortilemanager.Register(box);
+		boxmanager.Register(box);
 	}
 	//6 è„
 	for (int i = 0; i < 15; ++i)
@@ -79,7 +81,7 @@ void FloortileStage1::Initialize()
 		Box* box = new Box();
 		box->SetPosition(DirectX::XMFLOAT3(0.0f, -24.0f, i * 2.7f + 205));
 		box->SetAngle(DirectX::XMFLOAT3(89.5f, 0.0f, 0.0f));
-		floortilemanager.Register(box);
+		boxmanager.Register(box);
 	}
 	//11 è„
 	for (int i = 0; i < 15; ++i)
@@ -101,7 +103,7 @@ void FloortileStage1::Initialize()
 		Box* box = new Box();
 		box->SetPosition(DirectX::XMFLOAT3(0.0f, 18.5f, i * 2.7f + 280));
 		box->SetAngle(DirectX::XMFLOAT3(89.5f, 0.0f, 0.0f));
-		floortilemanager.Register(box);
+		boxmanager.Register(box);
 	}
 	//14 â∫	
 	for (int i = 0; i < 10; ++i)
@@ -116,7 +118,7 @@ void FloortileStage1::Initialize()
 		Box* box = new Box();
 		box->SetPosition(DirectX::XMFLOAT3(0.0f, 5.0f, i * 2.7f + 290));
 		box->SetAngle(DirectX::XMFLOAT3(89.5f, 0.0f, 0.0f));
-		floortilemanager.Register(box);
+		boxmanager.Register(box);
 	}
 	//16 â∫	
 	for (int i = 0; i < 10; ++i)
@@ -174,6 +176,9 @@ void FloortileStage1::Finalize()
 {
 	//î†ÇÃèIóπâª
 	FloorTileManager::Instance().Clear();
+
+	//è·äQï®ÇÃèIóπâª
+	BoxManager::Instance().Clear();
 }
 
 void FloortileStage1::Update(float elapsedTime)

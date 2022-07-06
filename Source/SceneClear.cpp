@@ -1,19 +1,15 @@
 #include "Graphics/Graphics.h"
-#include "SceneOver.h"
-#include "SceneGame.h"
-#include "SceneManager.h"
-#include "Input/Input.h"
-#include "SceneTitle.h"
+#include "SceneClear.h"
 
 //初期化
-void SceneOver::Initialize()
+void SceneClear::Initialize()
 {
     //スプライト初期化
-    sprite = new Sprite("Data/Sprite/gameover.png");
+    sprite = new Sprite("Data/Sprite/stageclear.png");
 }
 
 //終了化
-void SceneOver::Finalize()
+void SceneClear::Finalize()
 {
     //スプライト終了化
     if (sprite != nullptr)
@@ -24,25 +20,12 @@ void SceneOver::Finalize()
 }
 
 //更新処理
-void SceneOver::Update(float elapsedTime)
+void SceneClear::Update(float elapsedTime)
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    // 何かボタンを押したらゲームシーンへ切り替え
-    const GamePadButton anyButton =
-        GamePad::BTN_A |
-        GamePad::BTN_B |
-        GamePad::BTN_X |
-        GamePad::BTN_Y;
-
-    if (gamePad.GetButtonDown() & anyButton)
-    {
-        SceneManager::Instance().ChangeScene(new SceneGame);
-    }
 }
 
 //描画処理
-void SceneOver::Render()
+void SceneClear::Render()
 {
     Graphics& graphics = Graphics::Instance();
     ID3D11DeviceContext* dc = graphics.GetDeviceContext();

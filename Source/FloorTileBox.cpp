@@ -10,8 +10,8 @@ FloorTileBox::FloorTileBox()
     scale.x = scale.y = scale.z = 0.1f;
 
     //幅、高さ設定
-    radius = 0.7f;
-    height = 1.0f;
+    radius = 1.4f;
+    height = 0.4f;
 }
 
 //デストラクタ

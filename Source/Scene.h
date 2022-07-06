@@ -18,13 +18,4 @@ public:
 
     //•`‰æˆ—
     virtual void Render() = 0;
-
-    // €”õŠ®—¹‚µ‚Ä‚¢‚é‚©
-    bool IsReady() const { return ready; }
-
-    // €”õŠ®—¹İ’è
-    void SetReady() { ready = true; }
-
-private:
-    bool ready = false;
 };

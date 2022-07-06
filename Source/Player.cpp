@@ -1,12 +1,12 @@
 #include <imgui.h>
 #include "Player.h"
 #include "FloorTileManager.h"
+#include "BoxManager.h"
 #include "Collision.h"
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
 #include "SceneOver.h"
 #include "SceneManager.h"
-#include "SceneOver.h"
 
 //コンストラクタ
 Player::Player()
@@ -17,9 +17,9 @@ Player::Player()
     scale.x = scale.y = scale.z = 0.25f;
 
     //ヒットエフェクトを読み込む
-    effect = new Effect("Data/Effect/Laser01.efkefc");
+    effect = new Effect("Data/Effect/fire.efkefc");
 
-    height = 0.6f;
+    height = 1.6f;
     radius = 1.1f;
 }
 
@@ -46,6 +46,9 @@ void Player::Update(float elapsedTime)
     //プレイヤーと箱との衝突処理頭上
     CollisionPlayerVsFloortile();
 
+    //プレイヤーと障害物との衝突処理頭上
+    CollisionPlayerVsBox();
+
     //オブジェクト行列を更新
     UpdateTransform();
 
@@ -57,7 +60,6 @@ void Player::Update(float elapsedTime)
     {
         Death();
     }
-
 }
 
 //描画処理
@@ -84,7 +86,7 @@ void Player::CollisionPlayerVsFloortile()
     int floortileCount = floortilemanager.GetFloortileCount();
     for (int i = 0; i < floortileCount; ++i)
     {
-        FloorTile* floortile = floortilemanager.GetEnemy(i);
+        FloorTile* floortile = floortilemanager.GetFloortile(i);
 
         //衝突処理
         DirectX::XMFLOAT3 outPosition;
@@ -135,6 +137,34 @@ void Player::CollisionPlayerVsFloortile()
     }
 }
 
+//プレイヤーと障害物との衝突処理頭上
+void Player::CollisionPlayerVsBox()
+{
+    BoxManager& Boxmanager = BoxManager::Instance();
+
+    //全ての箱と総当たりで衝突処理
+    int BoxCount = Boxmanager.GetBoxCount();
+    for (int i = 0; i < BoxCount; ++i)
+    {
+        FloorTile* floortile = Boxmanager.GetBox(i);
+
+        //衝突処理
+        DirectX::XMFLOAT3 outPosition;
+        if (Collision::IntersectCylinderVsCylinder(
+            position,
+            radius,
+            height,
+            floortile->GetPosition(),
+            floortile->GetRadius(),
+            floortile->GetHeight(),
+            outPosition))
+        {
+            //押し出し処理
+            this->SetPosition(outPosition);
+        }
+    }
+}
+
 //デバッグ用GUI描画
 void Player::DrawDebugGUI()
 {
@@ -160,7 +190,6 @@ void Player::DrawDebugGUI()
             //スケール
             ImGui::InputFloat3("Scale", &scale.x);
 
-
             ImGui::InputFloat3("Velocity", &velocity.y);
         }
     }
@@ -178,7 +207,7 @@ void Player::Walk(float elapsedTime)
         //エフェクトの計算
         DirectX::XMFLOAT3 T = position;
         T.y += position.x * 0.5f;
-        effect->Play(position, 0.2f);
+        effect->Play(position,0.1f);
     }
 }
 
@@ -230,6 +259,7 @@ void Player::GravityInverse(float elapsedTime)
         //ここで車体を回す
         angle.z = DirectX::XMConvertToRadians(180);
 
+        height = 0.4f;
     }
     // 下反転(下走行)
     else if (!Reverse)
@@ -239,6 +269,8 @@ void Player::GravityInverse(float elapsedTime)
 
         //ここで車体を回す
         angle.z = 0;
+
+        height = 1.6f;
     }
 }
 

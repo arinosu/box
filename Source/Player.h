@@ -37,15 +37,21 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive();
 
+    //ライフセット
     void SetLife(const bool life_) { life = life_; }
 
+    //死ぬときの判定
     bool GetLife() { return life; }
 
+    //死亡処理
     void Death();
 
 private:
     //プレイヤーと箱との衝突処理頭上
     void CollisionPlayerVsFloortile();
+
+    //プレイヤーと障害物との衝突処理頭上
+    void CollisionPlayerVsBox();
 
 private:
     Model* model = nullptr;
