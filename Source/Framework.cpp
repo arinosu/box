@@ -5,6 +5,7 @@
 #include "Input/Input.h"
 #include "Framework.h"
 #include "SceneTitle.h"
+#include "SceneOver.h"
 #include "SceneChoice.h"
 #include "SceneManager.h"
 #include "EffectManager.h"

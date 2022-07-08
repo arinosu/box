@@ -4,34 +4,32 @@
 #include "Scene.h"
 #include <thread>
 
-// ローディングシーン
-class SceneLoading : public Scene
+//ローディングシーン
+class SceneLoading :public Scene
 {
 public:
-	SceneLoading(Scene* nextScene) : nextScene(nextScene) {}
+    SceneLoading(Scene* nextScene) :nextScene(nextScene) {}
+    ~SceneLoading()override {}
 
-	SceneLoading() {}
-	~SceneLoading() override {}
+    //初期化
+    void Initialize()override;
 
-	// 初期化
-	virtual void Initialize() override;
+    //終了化
+    void Finalize()override;
 
-	// 終了化
-	virtual void Finalize() override;
+    //更新処理
+    void Update(float elapsedTime)override;
 
-	// 更新処理
-	virtual void Update(float elapsedTime) override;
-
-	// 描画処理
-	virtual void Render() override;
+    //描画処理
+    void Render()override;
 
 private:
-	// ローディングスレッド
-	static void LoadingThread(SceneLoading* scene);
+    //ローディングスレッド
+    static void LoadingThread(SceneLoading* scene);
 
 private:
-	Sprite* sprite = nullptr;
-	float angle = 0.0f;
-	Scene* nextScene = nullptr;
-	std::thread* thread = nullptr;
+    Sprite* sprite = nullptr;
+    float angle = 0.0f;
+    Scene* nextScene = nullptr;
+    std::thread* thread = nullptr;
 };

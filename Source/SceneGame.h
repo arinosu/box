@@ -18,7 +18,6 @@ public:
 	SceneGame() {}
 	~SceneGame() override {}
 
-
 	// 初期化
 	void Initialize()override;
 
@@ -40,6 +39,7 @@ private:
 	FloortileStage1* floortilestage1 = nullptr;//例外スローを解消するため
 	FloortileStage2* floortilestage2 = nullptr;//例外スローを解消するため
 	FloortileStage3* floortilestage3 = nullptr;//例外スローを解消するため
-	float timer = 0;
-	Sprite* sprite = nullptr;
+	Sprite* sprite = nullptr;//例外スローを解消するため
+	float timer;
+	bool isChangeFlag = false;
 };

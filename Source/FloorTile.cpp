@@ -1,5 +1,6 @@
 #include "FloorTile.h"
 #include "FloorTileManager.h"
+#include "BoxManager.h"
 #include "Graphics/Graphics.h"
 
 //デバッグプリミティブ描画

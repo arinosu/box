@@ -48,8 +48,7 @@ void SceneChoice::Update(float elapsedTime)
         {
             stage_.Instance().Select(3);
         }
-        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        SceneManager::Instance().ChangeScene(new SceneGame);
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
 }
 

@@ -13,13 +13,6 @@ public:
     Player();
     ~Player()override;
 
-    //唯一のインスタンス取得
-    static Player& Instance()
-    {
-        static Player instance;
-        return instance;
-    }
-
     //デバッグ用GUI描画
     void DrawDebugGUI();
 
@@ -44,10 +37,13 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive();
 
+    //ライフセット
     void SetLife(const bool life_) { life = life_; }
 
+    //死ぬときの判定
     bool GetLife() { return life; }
 
+    //死亡処理
     void Death();
 
 private:
@@ -61,9 +57,7 @@ private:
     Model* model = nullptr;
     Effect* effect = nullptr;
     float ADJUST = 0.0125f;
-    float rolling = 12.0f;
     float gravity = 0.0f;
-    int count = 0;
     bool life = true;
 
     bool Reverse = false; // true:上走行　false:下走行

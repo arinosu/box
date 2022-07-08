@@ -3,6 +3,21 @@
 //更新処理
 void SceneManager::Update(float elapsedTime)
 {
+    if (nextScene != nullptr)
+    {
+        //古いシーン終了処理
+        Clear();
+
+        //新しいシーンを設定
+        currentScene = nextScene;
+        nextScene = nullptr;
+
+        //シーン初期設定
+        if (currentScene->IsReady() == false)
+        {
+            currentScene->Initialize();
+        }
+    }
 
     if (currentScene != nullptr)
     {
@@ -33,15 +48,6 @@ void SceneManager::Clear()
 //シーン切り替え
 void SceneManager::ChangeScene(Scene* scene)
 {
-    // 古いシーンを終了処理
-    Clear();
-
-    // 新しいシーンを設定
-    currentScene = scene;
-
-    // 未初期設定の場合は初期化処理
-    if (!currentScene->IsReady())
-    {
-        currentScene->Initialize();
-    }
+    //新しいシーンを設定
+    nextScene = scene;
 }

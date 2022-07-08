@@ -14,4 +14,6 @@ public:
 
     //XVˆ—
     virtual void Update(float elapsedTime) = 0;
+
+    int i = 100;
 };
