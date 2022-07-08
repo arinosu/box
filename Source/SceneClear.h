@@ -1,8 +1,9 @@
 #pragma once
+
 #include "Graphics/Sprite.h"
 #include "Scene.h"
 
-//ゲームクリア
+//ゲームオーバーシーン
 class SceneClear :public Scene
 {
 public:

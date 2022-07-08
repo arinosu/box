@@ -1,5 +1,4 @@
 #pragma once
-
 #include "floortile.h"
 #include "FloorTileStage.h"
 

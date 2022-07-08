@@ -2,34 +2,37 @@
 #include "SceneGame.h"
 #include "Camera.h"
 #include "FloortileManager.h"
-#include "BoxManager.h"
 #include "Floortilebox.h"
 #include "Input/Input.h"
 #include "EffectManager.h"
 #include "Scene.h"
-#include "SceneOver.h"
+#include "SceneClear.h"
 #include "SceneManager.h"
+#include "Stage.h"
+#include "SceneLoading.h"
+#include "BoxManager.h"
 
 // 初期化
 void SceneGame::Initialize()
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
+	Stage& stage_ = Stage::Instance();
 
 	//ステージ初期化
 	stage = new Stage();
 
-	//スプライト初期化、ゲームオーバー画面
+	//プレイヤー初期化
+	player = new Player();
+	player->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
+
+	//スプライト初期化
 	sprite = new Sprite("Data/Sprite/gameover.png");
 
 	//タイマー初期化
 	timer = 0.0f;
-
-	//プレイヤー初期化
-	player = new Player();
-	player->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, -1.6f));
-
+	
 	//ステージ1の初期化
-	if (gamePad.GetButton() & GamePad::BTN_B) {
+	if (stage_.number == 1) {
 		floortilestage1 = new FloortileStage1();
 		goal = new Goal();
 		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 500));
@@ -37,13 +40,13 @@ void SceneGame::Initialize()
 	}
 
 	//ステージ2の初期化
-	if (gamePad.GetButton() & GamePad::BTN_X) {
+	if (stage_.number == 2) {
 		floortilestage2 = new FloortileStage2();
 		floortilestage2->Initialize();
 	}
 
 	//ステージ3の初期化
-	if (gamePad.GetButton() & GamePad::BTN_Y) {
+	if (stage_.number == 3) {
 		floortilestage3 = new FloortileStage3();
 		floortilestage3->Initialize();
 	}
@@ -70,18 +73,10 @@ void SceneGame::Initialize()
 // 終了化
 void SceneGame::Finalize()
 {
-	//ステージ終了化
-	if (stage != nullptr)
+	if (goal != nullptr)
 	{
-		delete stage;
-		stage = nullptr;
-	}
-
-	// スプライト終了化
-	if (sprite != nullptr)
-	{
-		delete sprite;
-		sprite = nullptr;
+		delete goal;
+		goal = nullptr;
 	}
 
 	//プレイヤー終了化
@@ -91,17 +86,31 @@ void SceneGame::Finalize()
 		player = nullptr;
 	}
 
+	// スプライト終了化
+	if (sprite != nullptr)
+	{
+		delete sprite;
+		sprite = nullptr;
+	}
+
 	//箱の終了化
 	FloorTileManager::Instance().Clear();
 
 	//障害物の終了化
 	BoxManager::Instance().Clear();
 
-	//ゴールの終了化
-	if (goal != nullptr)
+	//カメラコントローラー終了化
+	if (cameraController != nullptr)
 	{
-		delete goal;
-		goal = nullptr;
+		delete cameraController;
+		cameraController = nullptr;
+	}
+
+	//ステージ終了化
+	if (stage != nullptr)
+	{
+		delete stage;
+		stage = nullptr;
 	}
 
 	//ステージ1の終了化
@@ -124,13 +133,6 @@ void SceneGame::Finalize()
 		delete floortilestage3;
 		floortilestage3 = nullptr;
 	}
-
-	//カメラコントローラー終了化
-	if (cameraController != nullptr)
-	{
-		delete cameraController;
-		cameraController = nullptr;
-	}
 }
 
 // 更新処理
@@ -138,32 +140,31 @@ void SceneGame::Update(float elapsedTime)
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
+	//カメラコントローラー更新処理
+	DirectX::XMFLOAT3 target = player->GetPosition();
+	target.y += 3.5f;
+	float cameraSpeed = 2.0f * elapsedTime;
+	cameraController->SetTarget(target);
+	cameraController->SetSpeed(cameraSpeed);
+	cameraController->Update(elapsedTime);
+	
 	//ステージ更新処理
 	stage->Update(elapsedTime);
 
 	//プレイヤー更新処理
 	player->Update(elapsedTime);
 
-	//箱更新処理
-	FloorTileManager::Instance().Update(elapsedTime);
-
-	//障害物更新処理
-	BoxManager::Instance().Update(elapsedTime);
-
-	//ゴールの更新処理
+	//ゴール更新処理
 	goal->Update(elapsedTime);
 
-	//カメラコントローラー更新処理
-	DirectX::XMFLOAT3 target = player->GetPosition();
-	target.y += 3.5f;
-	float cameraSpeed = 9.5f * elapsedTime;
-	cameraController->SetTarget(target);
-	cameraController->Update(elapsedTime);
+	//箱更新処理
+	FloorTileManager::Instance().Update(elapsedTime);
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
 
-	//プレイヤーが死亡処理
+	//if(player->GetPosition())
+
 	if (player->GetLife() == false)
 	{
 		timer++;
@@ -172,7 +173,7 @@ void SceneGame::Update(float elapsedTime)
 			GamePad::BTN_A;
 		if (gamePad.GetButton() & Button)
 		{
-			//初期化する
+			Finalize();
 			Initialize();
 		}
 	}
@@ -205,20 +206,18 @@ void SceneGame::Render()
 	{
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
+
 		//ステージ描画
 		stage->Render(dc, shader);
 
 		//プレイヤー描画
 		player->Render(dc, shader);
 
+		// ゴール描画
+		goal->Render(dc, shader);
+
 		//箱描画
 		FloorTileManager::Instance().Render(dc, shader);
-
-		//障害物描画
-		BoxManager::Instance().Render(dc, shader);
-
-		//ゴールの描画
-		goal->Render(dc, shader);
 
 		//これより下に書くと描画されない
 		shader->End(dc);
@@ -236,9 +235,6 @@ void SceneGame::Render()
 
 		//箱	デバッグプリミティブ描画
 		FloorTileManager::Instance().DrawDebugPrimitive();
-
-		//障害物デバッグプリミティブ描画
-		BoxManager::Instance().DrawDebugPrimitive();
 
 		// ラインレンダラ描画実行
 		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);

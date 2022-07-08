@@ -13,6 +13,13 @@ public:
     Player();
     ~Player()override;
 
+    //唯一のインスタンス取得
+    static Player& Instance()
+    {
+        static Player instance;
+        return instance;
+    }
+
     //デバッグ用GUI描画
     void DrawDebugGUI();
 
@@ -37,13 +44,10 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive();
 
-    //ライフセット
     void SetLife(const bool life_) { life = life_; }
 
-    //死ぬときの判定
     bool GetLife() { return life; }
 
-    //死亡処理
     void Death();
 
 private:

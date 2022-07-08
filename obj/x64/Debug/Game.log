@@ -1,3 +1,29 @@
-﻿     ライブラリ bin\x64\Debug\Game.lib とオブジェクト bin\x64\Debug\Game.exp を作成中
-SceneGame.obj : error LNK2019: 未解決の外部シンボル "public: void __cdecl CameraController::Update(float)" (?Update@CameraController@@QEAAXM@Z) が関数 "public: void __cdecl SceneGame::Update(float)" (?Update@SceneGame@@QEAAXM@Z) で参照されました
-bin\x64\Debug\Game.exe : fatal error LNK1120: 1 件の未解決の外部参照
+﻿  Audio.cpp
+  AudioResource.cpp
+  AudioSource.cpp
+  Camera.cpp
+  Character.cpp
+  Collision.cpp
+  FloorTile.cpp
+  FloorTileBox.cpp
+  FloorTileManager.cpp
+  Framework.cpp
+  DebugRenderer.cpp
+  Graphics.cpp
+  ImGuiRenderer.cpp
+  LambertShader.cpp
+  LineRenderer.cpp
+  Model.cpp
+  ModelResource.cpp
+  Sprite.cpp
+  GamePad.cpp
+  Input.cpp
+  Mouse.cpp
+C:\Users\2210051\Desktop\github\box\Source\EffectManager.h(4,10): fatal error C1083: include ファイルを開けません。'Effekseer.h':No such file or directory (ソース ファイルをコンパイルしています Source\Framework.cpp)
+  Logger.cpp
+  Main.cpp
+  Player.cpp
+  SceneGame.cpp
+  Stage.cpp
+C:\Users\2210051\Desktop\github\box\Source\Effect.h(4,10): fatal error C1083: include ファイルを開けません。'Effekseer.h':No such file or directory (ソース ファイルをコンパイルしています Source\Player.cpp)
+C:\Users\2210051\Desktop\github\box\Source\Effect.h(4,10): fatal error C1083: include ファイルを開けません。'Effekseer.h':No such file or directory (ソース ファイルをコンパイルしています Source\SceneGame.cpp)

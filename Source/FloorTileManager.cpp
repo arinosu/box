@@ -10,6 +10,8 @@ void FloorTileManager::Update(float elapsedTime)
     }
 
     //破棄処理
+    //※enemiesの範囲for文中でerase()すると不具合が発生してしまうため、
+    //更新処理が終わった後に破棄リストに積まれたオブジェクトを削除する。
     for (FloorTile* floortile : removes)
     {
         //std::vectorから要素を削除する場合はイテレーターで削除しなければならない
@@ -41,7 +43,7 @@ void FloorTileManager::Register(FloorTile* floortile)
     floortiles.emplace_back(floortile);
 }
 
-//フロアタイル削除
+//エネミー削除
 void FloorTileManager::Remove(FloorTile* floortile)
 {
     //破棄リストに追加

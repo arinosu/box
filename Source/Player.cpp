@@ -1,12 +1,12 @@
 #include <imgui.h>
 #include "Player.h"
 #include "FloorTileManager.h"
-#include "BoxManager.h"
 #include "Collision.h"
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
 #include "SceneOver.h"
 #include "SceneManager.h"
+#include "BoxManager.h"
 
 //コンストラクタ
 Player::Player()
@@ -19,8 +19,8 @@ Player::Player()
     //ヒットエフェクトを読み込む
     effect = new Effect("Data/Effect/fire.efkefc");
 
-    radius = 1.1f;
-    height = 1.6f;
+    height = 1.1f;
+    radius = 1.6f;
 }
 
 //デストラクタ
@@ -49,9 +49,6 @@ void Player::Update(float elapsedTime)
     //プレイヤーと箱との衝突処理頭上
     CollisionPlayerVsFloortile();
 
-    //プレイヤーと障害物との衝突処理頭上
-    CollisionPlayerVsBox();
-
     //オブジェクト行列を更新
     UpdateTransform();
 
@@ -63,6 +60,7 @@ void Player::Update(float elapsedTime)
     {
         Death();
     }
+
 }
 
 //描画処理
@@ -89,7 +87,7 @@ void Player::CollisionPlayerVsFloortile()
     int floortileCount = floortilemanager.GetFloortileCount();
     for (int i = 0; i < floortileCount; ++i)
     {
-        FloorTile* floortile = floortilemanager.GetFloortile(i);
+        FloorTile* floortile = floortilemanager.GetEnemy(i);
 
         //衝突処理
         DirectX::XMFLOAT3 outPosition;
@@ -193,6 +191,7 @@ void Player::DrawDebugGUI()
             //スケール
             ImGui::InputFloat3("Scale", &scale.x);
 
+
             ImGui::InputFloat3("Velocity", &velocity.y);
         }
     }
@@ -210,7 +209,7 @@ void Player::Walk(float elapsedTime)
         //エフェクトの計算
         DirectX::XMFLOAT3 T = position;
         T.y += position.x * 0.5f;
-        effect->Play(position,0.2f);
+        effect->Play(position, 0.2f);
     }
 }
 
@@ -262,7 +261,6 @@ void Player::GravityInverse(float elapsedTime)
         //ここで車体を回す
         angle.z = DirectX::XMConvertToRadians(180);
 
-        height = 0.4f;
     }
     // 下反転(下走行)
     else if (!Reverse)
@@ -272,8 +270,6 @@ void Player::GravityInverse(float elapsedTime)
 
         //ここで車体を回す
         angle.z = 0;
-
-        height = 1.6f;
     }
 }
 

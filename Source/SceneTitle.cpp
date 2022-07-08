@@ -4,17 +4,12 @@
 #include "SceneManager.h"
 #include "SceneChoice.h"
 #include "Input/Input.h"
-#include "Audio/Audio.h"
 
 //初期化
 void SceneTitle::Initialize()
 {
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/Title.png");
-
-    //音楽初期化
-    Audio& audi = Audio::Instance();
-    audi.LoadAudioSource("Data/Audio/BGM.wav");
 }
 
 //終了化
@@ -26,8 +21,6 @@ void SceneTitle::Finalize()
         delete sprite;
         sprite = nullptr;
     }
-
-    delete audio;
 }
 
 //更新処理

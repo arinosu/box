@@ -25,6 +25,7 @@ void Goal::Update(float elapsedTime)
 
     //モデル行列更新
     model->UpdateTransform(transform);
+
 }
 
 //描画処理

@@ -3,6 +3,7 @@
 #include "SceneGame.h"
 #include "SceneManager.h"
 #include "Input/Input.h"
+#include "SceneLoading.h"
 
 //初期化
 void SceneChoice::Initialize()
@@ -26,6 +27,7 @@ void SceneChoice::Finalize()
 void SceneChoice::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
+    Stage& stage_ = Stage::Instance();
 
     //スペースキーを押したらゲームシーンへ切り替え
     const GamePadButton Button =
@@ -34,6 +36,19 @@ void SceneChoice::Update(float elapsedTime)
       | GamePad::BTN_Y;
     if (gamePad.GetButton() & Button)
     {
+        if (gamePad.GetButton() & GamePad::BTN_B)
+        {
+            stage_.Instance().Select(1);
+        }
+        if (gamePad.GetButton() & GamePad::BTN_X)
+        {
+            stage_.Instance().Select(2);
+        }
+        if (gamePad.GetButton() & GamePad::BTN_Y)
+        {
+            stage_.Instance().Select(3);
+        }
+        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
         SceneManager::Instance().ChangeScene(new SceneGame);
     }
 }
