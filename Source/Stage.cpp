@@ -16,7 +16,7 @@ Stage::~Stage()
 //更新処理
 void Stage::Update(float elapsedTime)
 {
-    //今は特にやることはない
+    //移動処理
     move(elapsedTime);
 
     //オブジェクト行列を更新

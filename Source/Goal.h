@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Graphics/Graphics.h"
+#include "Graphics/Shader.h"
+#include "Graphics/Model.h"
+#include "Character.h"
 
-class Goal
+class Goal :public Character
 {
 public:
     Goal();
-    ~Goal();
+    ~Goal()override;
 
     //XVˆ—
     void Update(float elapsedTime);

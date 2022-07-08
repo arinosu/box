@@ -1,4 +1,6 @@
 #pragma once
+#include "Graphics/Sprite.h"
+#include <string>
 
 //ÉVÅ[Éì
 class Scene

@@ -19,8 +19,8 @@ Player::Player()
     //ヒットエフェクトを読み込む
     effect = new Effect("Data/Effect/fire.efkefc");
 
-    height = 1.6f;
     radius = 1.1f;
+    height = 1.6f;
 }
 
 //デストラクタ
@@ -36,6 +36,9 @@ void Player::Update(float elapsedTime)
 {
     //移動操作
     Walk(elapsedTime);
+
+    //エフェクトのポジションを更新
+    effect->SetPosition(0, position);
 
     //速力処理更新
     UpdateVelocity(elapsedTime);
@@ -207,7 +210,7 @@ void Player::Walk(float elapsedTime)
         //エフェクトの計算
         DirectX::XMFLOAT3 T = position;
         T.y += position.x * 0.5f;
-        effect->Play(position,0.1f);
+        effect->Play(position,0.2f);
     }
 }
 

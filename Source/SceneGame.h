@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "Player.h"
 #include "floortile.h"
+#include "Goal.h"
 #include "CameraController.h"
 #include "FloortileStage1.h"
 #include "FloortileStage2.h"
@@ -33,6 +34,7 @@ private:
 	Stage* stage = nullptr;   //例外スローを解消するため
 	Player* player = nullptr; //例外スローを解消するため
 	FloorTile* floorTile = nullptr; //例外スローを解消するため
+	Goal* goal = nullptr;//例外スローを解消するため
 	CameraController* cameraController = nullptr;//例外スローを解消するため
 	FloortileStage1* floortilestage1 = nullptr;//例外スローを解消するため
 	FloortileStage2* floortilestage2 = nullptr;//例外スローを解消するため

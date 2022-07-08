@@ -7,16 +7,6 @@ void CameraController::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-//--この処理はステージ作成のために使うので終わったら削除---------
-    float ax = gamePad.GetAxisRX();
-    float ay = gamePad.GetAxisRY();
-    //カメラの回転速度
-    float speed = rollSpeed * elapsedTime;
-
-    //スティックの入力値に合わせてＸ軸とＹ軸を回転
-    angle.x += ay * speed;
-    angle.y += ax * speed;
-
     //X軸のカメラ回転を制御
     if (angle.x > maxAngle)angle.x = maxAngle;
     if (angle.x < minAngle)angle.x = minAngle;
@@ -24,7 +14,6 @@ void CameraController::Update(float elapsedTime)
     //Y軸のカメラ回転を制御
     if (angle.y > maxAngle)angle.y = maxAngle;
     if (angle.y < minAngle)angle.y = minAngle;
-//-----------------------------------------------------------
 
     //カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
@@ -38,7 +27,7 @@ void CameraController::Update(float elapsedTime)
     DirectX::XMFLOAT3 eye;
     eye.x = target.x - front.x * range;
     eye.y = target.y - front.y * range;
-    eye.z = cameraSpeed - front.z * range;
+    eye.z = target.z - front.z * range;
 
     // ここでカメラの上下切り替えをする
     if (gamePad.GetButtonDown() & GamePad::BTN_A) CameraChange = !CameraChange;

@@ -31,6 +31,8 @@ void SceneGame::Initialize()
 	//ステージ1の初期化
 	if (gamePad.GetButton() & GamePad::BTN_B) {
 		floortilestage1 = new FloortileStage1();
+		goal = new Goal();
+		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 500));
 		floortilestage1->Initialize();
 	}
 
@@ -95,6 +97,13 @@ void SceneGame::Finalize()
 	//障害物の終了化
 	BoxManager::Instance().Clear();
 
+	//ゴールの終了化
+	if (goal != nullptr)
+	{
+		delete goal;
+		goal = nullptr;
+	}
+
 	//ステージ1の終了化
 	if (floortilestage1 != nullptr)
 	{
@@ -141,12 +150,14 @@ void SceneGame::Update(float elapsedTime)
 	//障害物更新処理
 	BoxManager::Instance().Update(elapsedTime);
 
+	//ゴールの更新処理
+	goal->Update(elapsedTime);
+
 	//カメラコントローラー更新処理
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 3.5f;
 	float cameraSpeed = 9.5f * elapsedTime;
 	cameraController->SetTarget(target);
-	cameraController->SetSpeed(cameraSpeed);
 	cameraController->Update(elapsedTime);
 
 	//エフェクト更新処理
@@ -205,6 +216,9 @@ void SceneGame::Render()
 
 		//障害物描画
 		BoxManager::Instance().Render(dc, shader);
+
+		//ゴールの描画
+		goal->Render(dc, shader);
 
 		//これより下に書くと描画されない
 		shader->End(dc);
