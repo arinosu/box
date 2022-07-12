@@ -1,29 +1,15 @@
 ﻿  Audio.cpp
-  AudioResource.cpp
   AudioSource.cpp
-  Camera.cpp
-  Character.cpp
-  Collision.cpp
   FloorTile.cpp
-  FloorTileBox.cpp
   FloorTileManager.cpp
   Framework.cpp
-  DebugRenderer.cpp
-  Graphics.cpp
-  ImGuiRenderer.cpp
-  LambertShader.cpp
-  LineRenderer.cpp
-  Model.cpp
-  ModelResource.cpp
   Sprite.cpp
-  GamePad.cpp
-  Input.cpp
-  Mouse.cpp
-C:\Users\2210051\Desktop\github\box\Source\EffectManager.h(4,10): fatal error C1083: include ファイルを開けません。'Effekseer.h':No such file or directory (ソース ファイルをコンパイルしています Source\Framework.cpp)
-  Logger.cpp
   Main.cpp
   Player.cpp
   SceneGame.cpp
   Stage.cpp
+C:\Users\2210051\Desktop\github\box\Source\Stage.h(31,34): warning C4042: 'number_': 指定されたストレージ クラスは、このコンテキストでは使えません。 (ソース ファイルをコンパイルしています Source\Stage.cpp)
 C:\Users\2210051\Desktop\github\box\Source\Effect.h(4,10): fatal error C1083: include ファイルを開けません。'Effekseer.h':No such file or directory (ソース ファイルをコンパイルしています Source\Player.cpp)
+C:\Users\2210051\Desktop\github\box\Source\Stage.h(31,34): warning C4042: 'number_': 指定されたストレージ クラスは、このコンテキストでは使えません。 (ソース ファイルをコンパイルしています Source\SceneGame.cpp)
 C:\Users\2210051\Desktop\github\box\Source\Effect.h(4,10): fatal error C1083: include ファイルを開けません。'Effekseer.h':No such file or directory (ソース ファイルをコンパイルしています Source\SceneGame.cpp)
+C:\Users\2210051\Desktop\github\box\Source\EffectManager.h(4,10): fatal error C1083: include ファイルを開けません。'Effekseer.h':No such file or directory (ソース ファイルをコンパイルしています Source\Framework.cpp)

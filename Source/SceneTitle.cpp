@@ -33,7 +33,7 @@ void SceneTitle::Update(float elapsedTime)
         GamePad::BTN_A;
     if (gamePad.GetButton() & Button)
     {
-        SceneManager::Instance().ChangeScene(new SceneChoice);
+        SceneManager::Instance().ChangeScene(new SceneLoagong(new SceneChoice));
     }
 }
 
