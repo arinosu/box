@@ -40,7 +40,7 @@ public:
     int GetFloortileCount()const { return static_cast<int>(floortiles.size()); }
 
     //フロアタイル取得
-    FloorTile* GetFloortile(int index) { return floortiles.at(index); }
+    FloorTile* GetEnemy(int index) { return floortiles.at(index); }
 
 private:
     std::vector<FloorTile*>floortiles;

@@ -33,7 +33,7 @@ void AudioSource::Play(bool loop)
 	buffer.pAudioData = resource->GetAudioData();
 	buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
-
+	
 	sourceVoice->SubmitSourceBuffer(&buffer);
 
 	HRESULT hr = sourceVoice->Start();

@@ -21,6 +21,17 @@ bool Collision::IntersectCylinderVsCylinder(
         return false;
     }
 
+    ////Bの足元がAの頭より上なら当たっていない
+    //if (positionB.y > positionA.y + heightA)
+    //{
+    //    return false;
+    //}
+    ////Bの頭がAの足元より下なら当たっていない
+    //if (positionB.y + heightB < positionA.y)
+    //{
+    //    return false;
+    //}
+
     //XZ平面での範囲チェック
     float vx = positionB.x - positionA.x;
     float vz = positionB.z - positionA.z;
@@ -35,10 +46,16 @@ bool Collision::IntersectCylinderVsCylinder(
     vx = distXZ != 0.0f ? vx /= distXZ : vx;
     vz = distXZ != 0.0f ? vz /= distXZ : vz;
 
+#if false
+    //AがBを押し出す
+    outPositionB.x = positionA.x + (vx * range);
+    outPositionB.y = positionA.y;
+    outPositionB.z = positionA.z + (vz * range);
+#else
     //AがBを押し出さない
     outPositionB.x = positionB.x + (vx * range);
     outPositionB.y = positionA.y;
     outPositionB.z = positionB.z - (vz * range);
-
+#endif
     return true;
 }

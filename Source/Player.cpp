@@ -1,12 +1,11 @@
 #include <imgui.h>
 #include "Player.h"
 #include "FloorTileManager.h"
-#include "BoxManager.h"
 #include "Collision.h"
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
-#include "SceneOver.h"
 #include "SceneManager.h"
+#include "BoxManager.h"
 
 //コンストラクタ
 Player::Player()
@@ -19,8 +18,8 @@ Player::Player()
     //ヒットエフェクトを読み込む
     effect = new Effect("Data/Effect/fire.efkefc");
 
-    radius = 1.1f;
-    height = 1.6f;
+    height = 1.1f;
+    radius = 1.6f;
 }
 
 //デストラクタ
@@ -63,6 +62,7 @@ void Player::Update(float elapsedTime)
     {
         Death();
     }
+
 }
 
 //描画処理
@@ -77,7 +77,7 @@ void Player::DrawDebugPrimitive()
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     //衝突判定用のデバッグを描画
-    //debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 }
 
 //プレイヤーと箱との衝突処理頭上
@@ -89,7 +89,7 @@ void Player::CollisionPlayerVsFloortile()
     int floortileCount = floortilemanager.GetFloortileCount();
     for (int i = 0; i < floortileCount; ++i)
     {
-        FloorTile* floortile = floortilemanager.GetFloortile(i);
+        FloorTile* floortile = floortilemanager.GetEnemy(i);
 
         //衝突処理
         DirectX::XMFLOAT3 outPosition;
@@ -193,6 +193,7 @@ void Player::DrawDebugGUI()
             //スケール
             ImGui::InputFloat3("Scale", &scale.x);
 
+
             ImGui::InputFloat3("Velocity", &velocity.y);
         }
     }
@@ -210,7 +211,7 @@ void Player::Walk(float elapsedTime)
         //エフェクトの計算
         DirectX::XMFLOAT3 T = position;
         T.y += position.x * 0.5f;
-        effect->Play(position,0.2f);
+        effect->Play(position, 0.2f);
     }
 }
 

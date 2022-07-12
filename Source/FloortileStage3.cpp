@@ -303,3 +303,8 @@ void FloortileStage3::Finalize()
 	//áŠQ•¨‚ÌI—¹‰»
 	BoxManager::Instance().Clear();
 }
+
+void FloortileStage3::Update(float elapsedTime)
+{
+	//¡‚â‚é‚±‚Æ‚ª‚È‚¢
+}

@@ -1,17 +1,22 @@
 #include "Graphics/Graphics.h"
 #include "SceneClear.h"
+#include "SceneGame.h"
+#include "SceneManager.h"
+#include "Input/Input.h"
+#include "SceneTitle.h"
+#include "SceneChoice.h"
 
-//初期化
+// 初期化
 void SceneClear::Initialize()
 {
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/stageclear.png");
 }
 
-//終了化
+// 終了化
 void SceneClear::Finalize()
 {
-    //スプライト終了化
+    // スプライト終了化
     if (sprite != nullptr)
     {
         delete sprite;
@@ -19,12 +24,32 @@ void SceneClear::Finalize()
     }
 }
 
-//更新処理
+// 更新処理
 void SceneClear::Update(float elapsedTime)
 {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    // 何かボタンを押したらゲームシーンへ切り替え
+    const GamePadButton anyButton =
+        GamePad::BTN_A |
+        GamePad::BTN_B |
+        GamePad::BTN_X |
+        GamePad::BTN_Y;
+
+    if (gamePad.GetButtonDown() & anyButton)
+    {
+        if (gamePad.GetButton() & GamePad::BTN_A) // Space
+        {
+            SceneManager::Instance().ChangeScene(new SceneChoice);
+        }
+        if (gamePad.GetButton() & GamePad::BTN_X) // C
+        {
+            SceneManager::Instance().ChangeScene(new SceneTitle);
+        }
+    }
 }
 
-//描画処理
+// 描画処理
 void SceneClear::Render()
 {
     Graphics& graphics = Graphics::Instance();
