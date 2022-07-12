@@ -17,10 +17,7 @@ void SceneGame::Initialize()
 	Stage& stage_ = Stage::Instance();
 
 	//ステージ初期化
-	stage = new Stage();
-
-	//タイマー初期化
-	timer = 0.0f;
+	//stage = new Stage();
 
 	//プレイヤー初期化
 	player = new Player();
@@ -31,7 +28,7 @@ void SceneGame::Initialize()
 		floortilestage1 = new FloortileStage1();
 		//ゴール初期化
 		goal = new Goal();
-		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 500));
+		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 2.0f, 500));
 		floortilestage1->Initialize();
 	}
 
@@ -39,7 +36,7 @@ void SceneGame::Initialize()
 	if (stage_.number == 2) {
 		floortilestage2 = new FloortileStage2();
 		goal = new Goal();
-		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 500));
+		goal->SetPosition(DirectX::XMFLOAT3(0.0f, -12.0f, 720));
 		floortilestage2->Initialize();
 	}
 
@@ -47,7 +44,7 @@ void SceneGame::Initialize()
 	if (stage_.number == 3) {
 		floortilestage3 = new FloortileStage3();
 		goal = new Goal();
-		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 500));
+		goal->SetPosition(DirectX::XMFLOAT3(0.0f, -7.0f, 840));
 		floortilestage3->Initialize();
 	}
 
@@ -74,11 +71,11 @@ void SceneGame::Initialize()
 void SceneGame::Finalize()
 {
 	//ステージ終了化
-	if (stage != nullptr)
-	{
-		delete stage;
-		stage = nullptr;
-	}
+	//if (stage != nullptr)
+	//{
+	//	delete stage;
+	//	stage = nullptr;
+	//}
 
 	//プレイヤー終了化
 	if (player != nullptr)
@@ -135,7 +132,7 @@ void SceneGame::Update(float elapsedTime)
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
 	//ステージ更新処理
-	stage->Update(elapsedTime);
+	//stage->Update(elapsedTime);
 
 	//プレイヤー更新処理
 	player->Update(elapsedTime);
@@ -171,7 +168,6 @@ void SceneGame::Update(float elapsedTime)
 }
 
 
-
 // 描画処理
 void SceneGame::Render()
 {
@@ -181,7 +177,7 @@ void SceneGame::Render()
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
 	// 画面クリア＆レンダーターゲット設定
-	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+	FLOAT color[] = { 1.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
@@ -200,7 +196,7 @@ void SceneGame::Render()
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
 		//ステージ描画
-		stage->Render(dc, shader);
+		//stage->Render(dc, shader);
 
 		//プレイヤー描画
 		player->Render(dc, shader);
@@ -243,16 +239,6 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-#if false
-		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
-		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-		float textureWidth = static_cast<float>(sprite->GetTextureWidth());
-		float textureHeight = static_cast<float>(sprite->GetTextureHeight());
-		if (player->GetLife() == false)
-		{
-			sprite->Render(dc, 0, 0, screenWidth, screenHeight, 0, 0, textureWidth, textureHeight, 0, 1, 1, 1, 1);
-		}
-#endif
 	}
 
 	// 2DデバッグGUI描画

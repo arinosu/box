@@ -6,6 +6,12 @@
 //初期化
 void SceneLoading::Initialize()
 {
+    //モデル初期化
+    model = new Model("Data/Model/Car/car.mdl");
+
+    //モデルが大きいのでスケーリング、あまりしないほうが良い
+    scale.x = scale.y = scale.z = 0.25f;
+
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/LoadingIcon.png");
 
@@ -24,6 +30,9 @@ void SceneLoading::Finalize()
         thread = nullptr;
     }
 
+    //モデルを破棄
+    delete model;
+
     //スプライト終了化
     if (sprite != nullptr)
     {
@@ -35,6 +44,12 @@ void SceneLoading::Finalize()
 //更新処理
 void SceneLoading::Update(float elapsedTime)
 {
+    //オブジェクト行列を更新
+    UpdateTransform();
+
+    //モデル行列更新
+    model->UpdateTransform(transform);
+
     constexpr float speed = 180;
     angle += speed * elapsedTime;
 
@@ -44,6 +59,11 @@ void SceneLoading::Update(float elapsedTime)
         SceneManager::Instance().ChangeScene(nextScene);
         nextScene = nullptr;
     }
+}
+
+void SceneLoading::RENDER(ID3D11DeviceContext* dc, Shader* shader)
+{
+    shader->Draw(dc, model);
 }
 
 //描画処理
@@ -88,4 +108,22 @@ void SceneLoading::LoadingThread(SceneLoading* scene)
 
     //次のシーンの準備完了設定
     scene->nextScene->SetReady();
+}
+
+void SceneLoading::UpdateTransform()
+{
+    //スケール行列を更新
+    DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+
+    //回転行列を作成
+    DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angl.x, angl.y, angl.z);
+
+    //位置行列を作成
+    DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
+
+    //３つの行列を組み合わせ、ワールド行列を作成
+    DirectX::XMMATRIX W = S * R * T;
+
+    //計算したワールド行列を取り出す
+    DirectX::XMStoreFloat4x4(&transform, W);
 }

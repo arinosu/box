@@ -8,7 +8,7 @@ Goal::Goal()
     model = new Model("Data/Model/Goal/goal.mdl");
 
     //モデルが大きいのでスケーリング、あまりしないほうが良い
-    scale.x = scale.y = scale.z = 1.20f;
+    scale.x = scale.y = scale.z = 0.50f;
 }
 
 Goal::~Goal()

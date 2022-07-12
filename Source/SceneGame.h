@@ -40,6 +40,5 @@ private:
 	FloortileStage2* floortilestage2 = nullptr;//例外スローを解消するため
 	FloortileStage3* floortilestage3 = nullptr;//例外スローを解消するため
 	Sprite* sprite = nullptr;//例外スローを解消するため
-	float timer;
 	bool isChangeFlag = false;
 };
