@@ -8,7 +8,7 @@ Goal::Goal()
     model = new Model("Data/Model/Goal/goal.mdl");
 
     //モデルが大きいのでスケーリング、あまりしないほうが良い
-    scale.x = scale.y = scale.z = 1.25f;
+    scale.x = scale.y = scale.z = 0.50f;
 }
 
 Goal::~Goal()
@@ -24,8 +24,7 @@ void Goal::Update(float elapsedTime)
     UpdateTransform();
 
     //モデル行列更新
-    model->UpdateTransform(transform);
-
+    model->UpdateTransform(transform);    
 }
 
 //描画処理

@@ -10,8 +10,6 @@ void SceneChoice::Initialize()
 {
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/stageselect.png");
-
-
 }
 
 //終了化
@@ -31,7 +29,7 @@ void SceneChoice::Update(float elapsedTime)
     GamePad& gamePad = Input::Instance().GetGamePad();
     Stage& stage_ = Stage::Instance();
 
-    //スペースキーを押したらゲームシーンへ切り替え
+    //1,2,3を押したら各々のゲームシーンに行く
     const GamePadButton Button =
         GamePad::BTN_B
       | GamePad::BTN_X
@@ -51,7 +49,6 @@ void SceneChoice::Update(float elapsedTime)
             stage_.Instance().Select(3);
         }
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        
     }
 }
 

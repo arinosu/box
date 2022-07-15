@@ -3,6 +3,7 @@
 #include <wrl.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <string>
 
 // スプライト
 class Sprite
@@ -28,6 +29,9 @@ public:
 		float angle,
 		float r, float g, float b, float a) const;
 
+	////2D文字コード表示
+	void textout(ID3D11DeviceContext* immediate_context, std::string s, float x, float y, float w, float h, float r, float g, float b, float a);
+
 	// テクスチャ幅取得
 	int GetTextureWidth() const { return textureWidth; }
 
@@ -50,4 +54,6 @@ private:
 
 	int textureWidth = 0;
 	int textureHeight = 0;
+
+	D3D11_TEXTURE2D_DESC texture2d_desc;
 };

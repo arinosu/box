@@ -5,14 +5,13 @@
 #include "SceneChoice.h"
 #include "Input/Input.h"
 
-
 //初期化
 void SceneTitle::Initialize()
 {
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/Title.png");
 
-    //オーディオ初期設定
+    //音楽再生
     bgm = Audio::Instance().LoadAudioSource("Data/Audio/Title.wav");
     bgm->Play(true);
 }
@@ -26,13 +25,16 @@ void SceneTitle::Finalize()
         delete sprite;
         sprite = nullptr;
     }
+
+    //音楽終了化
+    bgm->Stop();
+    bgm->~AudioSource();
 }
 
 //更新処理
 void SceneTitle::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-
 
     //スペースキーを押したらセレクト画面へ切り替え
     const GamePadButton Button =

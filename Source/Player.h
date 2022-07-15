@@ -13,7 +13,6 @@ public:
     Player();
     ~Player()override;
 
-    //唯一のインスタンス取得
     static Player& Instance()
     {
         static Player instance;
@@ -44,11 +43,19 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive();
 
+    //ライフセット
     void SetLife(const bool life_) { life = life_; }
 
+    //死ぬときの判定
     bool GetLife() { return life; }
 
+    //死亡処理
     void Death();
+
+    //ゲームクリア演出 1,2,3 ステージ毎に違うので注意
+    void Clear1(float elapsedTime);
+    void Clear2(float elapsedTime);
+    void Clear3(float elapsedTime);
 
 private:
     //プレイヤーと箱との衝突処理頭上
@@ -59,12 +66,10 @@ private:
 
 private:
     Model* model = nullptr;
-    Effect* effect = nullptr;
+    Effect* effect[2] = {};
     float ADJUST = 0.0125f;
-    float rolling = 12.0f;
     float gravity = 0.0f;
-    int count = 0;
+    float moveSpeed = 0.0f;
     bool life = true;
-
     bool Reverse = false; // true:上走行　false:下走行
 };

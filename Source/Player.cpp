@@ -1,11 +1,13 @@
 #include <imgui.h>
 #include "Player.h"
 #include "FloorTileManager.h"
+#include "BoxManager.h"
 #include "Collision.h"
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
 #include "SceneManager.h"
-#include "BoxManager.h"
+#include "Stage.h"
+#include "Camera.h"
 
 //コンストラクタ
 Player::Player()
@@ -15,18 +17,22 @@ Player::Player()
     //モデルが大きいのでスケーリング、あまりしないほうが良い
     scale.x = scale.y = scale.z = 0.25f;
 
-    //ヒットエフェクトを読み込む
-    effect = new Effect("Data/Effect/fire.efkefc");
+    //エフェクトを読み込む
+    effect[0] = new Effect("Data/Effect/fire.efkefc");
+    effect[1] = new Effect("Data/Effect/Hanabi.efkefc");
 
-    height = 1.1f;
-    radius = 1.6f;
+    radius = 1.1f;
+    height = 1.6f;
 }
 
 //デストラクタ
 Player::~Player()
 {
-    delete effect;
+    //エフェクト終了化
+    delete effect[0];
+    delete effect[1];
 
+    //モデル破棄
     delete model;
 }
 
@@ -34,10 +40,11 @@ Player::~Player()
 void Player::Update(float elapsedTime)
 {
     //移動操作
-    Walk(elapsedTime);
+     Walk(elapsedTime);
 
     //エフェクトのポジションを更新
-    effect->SetPosition(0, position);
+    effect[0]->SetPosition(0, position);
+    effect[0]->~Effect();
 
     //速力処理更新
     UpdateVelocity(elapsedTime);
@@ -62,7 +69,6 @@ void Player::Update(float elapsedTime)
     {
         Death();
     }
-
 }
 
 //描画処理
@@ -77,7 +83,7 @@ void Player::DrawDebugPrimitive()
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     //衝突判定用のデバッグを描画
-    debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    //debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 }
 
 //プレイヤーと箱との衝突処理頭上
@@ -89,7 +95,7 @@ void Player::CollisionPlayerVsFloortile()
     int floortileCount = floortilemanager.GetFloortileCount();
     for (int i = 0; i < floortileCount; ++i)
     {
-        FloorTile* floortile = floortilemanager.GetEnemy(i);
+        FloorTile* floortile = floortilemanager.GetFloortile(i);
 
         //衝突処理
         DirectX::XMFLOAT3 outPosition;
@@ -193,7 +199,6 @@ void Player::DrawDebugGUI()
             //スケール
             ImGui::InputFloat3("Scale", &scale.x);
 
-
             ImGui::InputFloat3("Velocity", &velocity.y);
         }
     }
@@ -203,16 +208,14 @@ void Player::DrawDebugGUI()
 //移動操作
 void Player::Walk(float elapsedTime)
 {
-    float moveSpeed = 10.0f * elapsedTime;   //一秒間に1.0移動する速度
-    {
-        //真っ直ぐ勝手に進む
-        position.z += moveSpeed;
+    //ステージ１の場合
+    Clear1(elapsedTime);
 
-        //エフェクトの計算
-        DirectX::XMFLOAT3 T = position;
-        T.y += position.x * 0.5f;
-        effect->Play(position, 0.2f);
-    }
+    //ステージ２の場合
+    Clear2(elapsedTime);
+
+    //ステージ3の場合
+    Clear3(elapsedTime);
 }
 
 //ジャンプ処理
@@ -292,5 +295,110 @@ void Player::Death()
     else
     {
         SetLife(true);
+    }
+}
+
+//ステージ1のクリア演出
+void Player::Clear1(float elapsedTime)
+{
+    Stage& stage_ = Stage::Instance();
+    Camera& camera = Camera::Instance();
+    Graphics& graphics = Graphics::Instance();
+
+    //ステージ１の場合
+    if (position.z <= 500 && stage_.number == 1)
+    {
+        moveSpeed = 10.0f * elapsedTime;   //一秒間に10.0移動する速度
+        //真っ直ぐ勝手に進む
+        position.z += moveSpeed;
+
+        //エフェクト(煙)
+        effect[0]->Play(position, 0.2f);
+
+        //エフェクト花火演出
+        if (position.z >= 500)
+        {
+            //煙のほうを破棄して花火を放つ
+            effect[0]->~Effect();
+            effect[1]->Play(position, 2.0f);
+
+            //カメラを遠くにする
+            camera.SetPerspectiveFov(
+                DirectX::XMConvertToRadians(160),
+                graphics.GetScreenWidth() / graphics.GetScreenHeight(),
+                0.1f,
+                1000.0f
+            );
+        }
+    }
+}
+
+//ステージ2のクリア演出
+void Player::Clear2(float elapsedTime)
+{
+    Stage& stage_ = Stage::Instance();
+    Camera& camera = Camera::Instance();
+    Graphics& graphics = Graphics::Instance();
+
+    //ステージ２の場合
+    if (position.z <= 720 && stage_.number == 2)
+    {
+        moveSpeed = 10.0f * elapsedTime;   //一秒間に10.0移動する速度
+        //真っ直ぐ勝手に進む
+        position.z += moveSpeed;
+
+        //エフェクト(煙)
+        effect[0]->Play(position, 0.2f);
+
+        //エフェクト花火演出
+        if (position.z >= 720)
+        {
+            //煙のほうを破棄して花火を放つ
+            effect[0]->~Effect();
+            effect[1]->Play(position, 2.0f);
+
+            //カメラを遠くにする
+            camera.SetPerspectiveFov(
+                DirectX::XMConvertToRadians(160),
+                graphics.GetScreenWidth() / graphics.GetScreenHeight(),
+                0.1f,
+                1000.0f
+            );
+        }
+    }
+}
+
+//ステージ3のクリア演出
+void Player::Clear3(float elapsedTime)
+{
+    Stage& stage_ = Stage::Instance();
+    Camera& camera = Camera::Instance();
+    Graphics& graphics = Graphics::Instance();
+
+    //ステージ3の場合
+    if (position.z <= 840 && stage_.number == 3)
+    {
+        moveSpeed = 10.0f * elapsedTime;   //一秒間に10.0移動する速度
+        //真っ直ぐ勝手に進む
+        position.z += moveSpeed;
+
+        //エフェクト(煙)
+        effect[0]->Play(position, 0.2f);
+
+        //エフェクト花火演出
+        if (position.z >= 840)
+        {
+            //煙のほうを破棄して花火を放つ
+            effect[0]->~Effect();
+            effect[1]->Play(position, 2.0f);
+
+            //カメラを遠くにする
+            camera.SetPerspectiveFov(
+                DirectX::XMConvertToRadians(160),
+                graphics.GetScreenWidth() / graphics.GetScreenHeight(),
+                0.1f,
+                1000.0f
+            );
+        }
     }
 }

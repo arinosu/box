@@ -11,6 +11,7 @@
 #include "Scene.h"
 #include "Graphics/Sprite.h"
 #include "Audio/Audio.h"
+#include "Effect.h"
 
 // ゲームシーン
 class SceneGame :public Scene
@@ -18,7 +19,6 @@ class SceneGame :public Scene
 public:
 	SceneGame() {}
 	~SceneGame() override {}
-
 
 	// 初期化
 	void Initialize()override;
@@ -41,10 +41,8 @@ private:
 	FloortileStage1* floortilestage1 = nullptr;//例外スローを解消するため
 	FloortileStage2* floortilestage2 = nullptr;//例外スローを解消するため
 	FloortileStage3* floortilestage3 = nullptr;//例外スローを解消するため
-	float timer = 0;
-	Sprite* sprite = nullptr;
-
-	std::unique_ptr<AudioSource> bgm_1;
-	std::unique_ptr<AudioSource> bgm_2;
-	std::unique_ptr<AudioSource> bgm_3;
+	Sprite* sprite = nullptr;//例外スローを解消するため
+	Effect* effect = nullptr;
+	std::unique_ptr<AudioSource> stagebgm[3];
+	float timer = 0.0f;
 };

@@ -28,7 +28,7 @@ Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale)
     Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
     Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, position.x, position.y, position.z);
-    effekseerManager->SetScale(handle, scale * 1.0f, scale * 1.0f, scale * 1.0f);
+    effekseerManager->SetScale(handle, scale, scale, scale);
     return handle;
 }
 

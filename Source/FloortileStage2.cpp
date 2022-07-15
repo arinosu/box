@@ -245,8 +245,3 @@ void FloortileStage2::Finalize()
 	//áŠQ•¨‚ÌI—¹‰»
 	BoxManager::Instance().Clear();
 }
-
-void FloortileStage2::Update(float elapsedTime)
-{
-	//¡‚â‚é‚±‚Æ‚ª‚È‚¢
-}

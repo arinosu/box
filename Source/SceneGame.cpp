@@ -2,15 +2,14 @@
 #include "SceneGame.h"
 #include "Camera.h"
 #include "FloortileManager.h"
+#include "BoxManager.h"
 #include "Floortilebox.h"
 #include "Input/Input.h"
 #include "EffectManager.h"
 #include "Scene.h"
-#include "SceneClear.h"
 #include "SceneManager.h"
-#include "Stage.h"
+#include "SceneClear.h"
 #include "SceneLoading.h"
-#include "BoxManager.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -18,49 +17,59 @@ void SceneGame::Initialize()
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	Stage& stage_ = Stage::Instance();
 
+	//背景初期
+	sprite = new Sprite("Data/Sprite/space.png");
+
 	//ステージ初期化
 	stage = new Stage();
+	stage->SetPosition(DirectX::XMFLOAT3(165.0f, 100.0f, 0.0f));
 
-	//オーディオ初期設定
-	bgm_1 = Audio::Instance().LoadAudioSource("Data/Audio/Stage1.wav");
-	bgm_2 = Audio::Instance().LoadAudioSource("Data/Audio/Stage2.wav");
-	bgm_3 = Audio::Instance().LoadAudioSource("Data/Audio/Stage3.wav");
+	//音楽初期設定
+	stagebgm[0] = Audio::Instance().LoadAudioSource("Data/Audio/Stage1.wav");
+	stagebgm[1] = Audio::Instance().LoadAudioSource("Data/Audio/Stage2.wav");
+	stagebgm[2] = Audio::Instance().LoadAudioSource("Data/Audio/Stage3.wav");
 
 	//プレイヤー初期化
 	player = new Player();
-	player->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
+	player->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, -1.6f));
 
-	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/gameover.png");
-
-	//タイマー初期化
-	timer = 0.0f;
-	
 	//ステージ1の初期化
-	if (stage_.number == 1) {
+	if (stage_.number==1) {
 		floortilestage1 = new FloortileStage1();
+
+		//ゴール初期化
 		goal = new Goal();
-		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 500));
+		goal->SetPosition(DirectX::XMFLOAT3(0.0f, 2.0f, 500));
 		floortilestage1->Initialize();
-		bgm_1->Play(true);
+
+		//音楽プレイ
+		stagebgm[0]->Play(true);
 	}
 
 	//ステージ2の初期化
 	if (stage_.number == 2) {
 		floortilestage2 = new FloortileStage2();
+
+		//ゴール初期化
 		goal = new Goal();
 		goal->SetPosition(DirectX::XMFLOAT3(0.0f, -12.0f, 720));
 		floortilestage2->Initialize();
-		bgm_2->Play(true);
+
+		//音楽プレイ
+		stagebgm[1]->Play(true);
 	}
 
 	//ステージ3の初期化
 	if (stage_.number == 3) {
 		floortilestage3 = new FloortileStage3();
+
+		//ゴール初期化
 		goal = new Goal();
 		goal->SetPosition(DirectX::XMFLOAT3(0.0f, -7.0f, 840));
 		floortilestage3->Initialize();
-		bgm_3->Play(true);
+
+		//音楽プレイ
+		stagebgm[2]->Play(true);
 	}
 
 	//カメラコントローラー初期化
@@ -85,37 +94,14 @@ void SceneGame::Initialize()
 // 終了化
 void SceneGame::Finalize()
 {
+	//背景終了化
+	delete sprite;
+
+	//ゴールの終了化
 	if (goal != nullptr)
 	{
 		delete goal;
 		goal = nullptr;
-	}
-
-	//プレイヤー終了化
-	if (player != nullptr)
-	{
-		delete player;
-		player = nullptr;
-	}
-
-	// スプライト終了化
-	if (sprite != nullptr)
-	{
-		delete sprite;
-		sprite = nullptr;
-	}
-
-	//箱の終了化
-	FloorTileManager::Instance().Clear();
-
-	//障害物の終了化
-	BoxManager::Instance().Clear();
-
-	//カメラコントローラー終了化
-	if (cameraController != nullptr)
-	{
-		delete cameraController;
-		cameraController = nullptr;
 	}
 
 	//ステージ終了化
@@ -125,11 +111,24 @@ void SceneGame::Finalize()
 		stage = nullptr;
 	}
 
+	//プレイヤー終了化
+	if (player != nullptr)
+	{
+		delete player;
+		player = nullptr;
+	}
+
+	//箱の終了化
+	FloorTileManager::Instance().Clear();
+
+	//障害物の終了化
+	BoxManager::Instance().Clear();
+
 	//ステージ1の終了化
 	if (floortilestage1 != nullptr)
 	{
-		bgm_1->Stop();
-		bgm_1->~AudioSource();
+		stagebgm[0]->Stop();
+		stagebgm[0]->~AudioSource();
 		delete floortilestage1;
 		floortilestage1 = nullptr;
 	}
@@ -137,8 +136,8 @@ void SceneGame::Finalize()
 	//ステージ2の終了化
 	if (floortilestage2 != nullptr)
 	{
-		bgm_2->Stop();
-		bgm_2->~AudioSource();
+		stagebgm[1]->Stop();
+		stagebgm[1]->~AudioSource();
 		delete floortilestage2;
 		floortilestage2 = nullptr;
 	}
@@ -146,12 +145,18 @@ void SceneGame::Finalize()
 	//ステージ3の終了化
 	if (floortilestage3 != nullptr)
 	{
-		bgm_3->Stop();
-		bgm_3->~AudioSource();
+		stagebgm[2]->Stop();
+		stagebgm[2]->~AudioSource();
 		delete floortilestage3;
 		floortilestage3 = nullptr;
 	}
 
+	//カメラコントローラー終了化
+	if (cameraController != nullptr)
+	{
+		delete cameraController;
+		cameraController = nullptr;
+	}
 }
 
 // 更新処理
@@ -162,18 +167,17 @@ void SceneGame::Update(float elapsedTime)
 	//カメラコントローラー更新処理
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 3.5f;
-	float cameraSpeed = 2.0f * elapsedTime;
+	float cameraSpeed = 9.5f * elapsedTime;
 	cameraController->SetTarget(target);
-	cameraController->SetSpeed(cameraSpeed);
 	cameraController->Update(elapsedTime);
-	
+
 	//ステージ更新処理
 	stage->Update(elapsedTime);
-
+	 
 	//プレイヤー更新処理
 	player->Update(elapsedTime);
 
-	//ゴール更新処理
+	//ゴールの更新処理
 	goal->Update(elapsedTime);
 
 	//箱更新処理
@@ -185,19 +189,22 @@ void SceneGame::Update(float elapsedTime)
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
 
-
+	//死亡処理
 	if (player->GetLife() == false && player->GetPosition().z < goal->GetPosition().z)
 	{
-		timer++;
 		//スペースキーを押したらセレクト画面へ切り替え
-			Finalize();
-			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 	}
+	//STAGECLEAR処理
 	else
 	{
 		if (player->GetPosition().z >= goal->GetPosition().z && player->GetLife())
 		{
-			SceneManager::Instance().ChangeScene(new SceneClear);
+			timer++;
+			//ゴールしたらクリア
+			if (timer >= 300) {
+				SceneManager::Instance().ChangeScene(new SceneClear);
+			}
 		}
 	}
 }
@@ -211,7 +218,7 @@ void SceneGame::Render()
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
 	// 画面クリア＆レンダーターゲット設定
-	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+	FLOAT color[] = { 1.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
@@ -225,18 +232,27 @@ void SceneGame::Render()
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
 
+	// 2Dスプライト描画
+	{
+		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
+		float textureWidth = static_cast<float>(sprite->GetTextureWidth());
+		float textureHeight = static_cast<float>(sprite->GetTextureHeight());
+		//タイトルスプライト描画
+		sprite->Render(dc, 0, 0, screenWidth, screenHeight, 0, 0, textureWidth, textureHeight, 0, 1, 1, 1, 1);
+	}
+
 	// 3Dモデル描画
 	{
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
-
 		//ステージ描画
 		stage->Render(dc, shader);
 
 		//プレイヤー描画
 		player->Render(dc, shader);
 
-		// ゴール描画
+		//ゴールの描画
 		goal->Render(dc, shader);
 
 		//箱描画
@@ -270,14 +286,6 @@ void SceneGame::Render()
 
 		// デバッグレンダラ描画実行
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
-	}
-
-	// 2Dスプライト描画
-	{
-		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
-		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-		float textureWidth = static_cast<float>(sprite->GetTextureWidth());
-		float textureHeight = static_cast<float>(sprite->GetTextureHeight());
 	}
 
 	// 2DデバッグGUI描画

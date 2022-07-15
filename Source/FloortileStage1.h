@@ -1,4 +1,5 @@
 #pragma once
+
 #include "floortile.h"
 #include "FloorTileStage.h"
 
@@ -13,9 +14,6 @@ public:
 
     //I—¹‰»
     void Finalize()override;
-
-    //XVˆ—
-    void Update(float elapsedTime)override;
 
 private:
     FloorTile* floortile = nullptr;

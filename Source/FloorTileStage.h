@@ -11,7 +11,4 @@ public:
 
     //I—¹‰»
     virtual void Finalize() = 0;
-
-    //XVˆ—
-    virtual void Update(float elapsedTime) = 0;
 };
